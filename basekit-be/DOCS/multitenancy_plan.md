@@ -2,31 +2,106 @@
 
 ## Overview
 
-Each tenant gets its own isolated PostgreSQL database on the **same Postgres instance**. The database name matches the tenant slug (e.g. tenant `acme` → database `acme`). All tenants share the same API (this backend). TypeORM is used for all database access.
+Each tenant gets its own isolated PostgreSQL database on the **same Postgres instance**. The database name is prefixed as `tenant_[slug]` (e.g. tenant `acme` → database `tenant_acme`). All tenants share the same API (this backend). TypeORM is used for all database access.
 
 Every request **must** include the `x-tenant` header — it is not optional. For authenticated routes, the JWT `tenantId` claim is a required security double-check: the backend compares the header value against the token claim and rejects any mismatch. This prevents a stolen token issued for tenant A from being used against tenant B.
 
+Multitenancy (separate databases per tenant) can be toggled off via `MULTITENANCY_ENABLED=false`. When disabled, all tenants share the `master` database — the `x-tenant` / JWT validation and the `tenants` table remain active for tenant configuration purposes, but no per-tenant database connections are created.
+
 ---
 
-## 1. Tenant Registry (Shared / Public Database)
+## 1. App Config (`src/config/config.ts`)
 
-A single shared database (e.g. named `registry`) on the same Postgres instance holds the tenant registry. This is the only database the app connects to at startup, configured via the standard `TypeOrmModule.forRoot()`.
+All environment variables are centralized in `config.ts`. Update it to expose all database connection fields, the multitenancy flag, and any other app-level config:
+
+```typescript
+// src/config/config.ts
+export default () => ({
+  server: {
+    port: process.env.PORT || 3000,
+  },
+  database: {
+    host: process.env.DB_HOST ?? 'localhost',
+    port: Number(process.env.DB_PORT ?? 5432),
+    username: process.env.DB_USER ?? 'postgres',
+    password: process.env.DB_PASS ?? '',
+    name: process.env.DB_NAME ?? 'master',
+  },
+  multitenancy: {
+    enabled: process.env.MULTITENANCY_ENABLED !== 'false',
+  },
+});
+```
+
+> `enabled` defaults to `true` — opt out explicitly by setting `MULTITENANCY_ENABLED=false`. Individual DB fields (host, port, username, password) are preferred over a connection string so `datasource.ts` can compose them with a dynamic database name per tenant.
+
+---
+
+## 2. Shared DataSource Config (`src/database/datasource.ts`)
+
+All tenant databases share the same connection options — only the `database` field differs. A base config object is defined once and reused everywhere (tenant provider, migration runner, etc.). It imports from `config.ts` directly so it works both inside NestJS DI and in standalone CLI scripts (e.g. the migration runner).
+
+```
+src/
+  config/
+    config.ts         # env vars and defaults
+database/
+  datasource.ts     # base DataSourceOptions shared by all tenant connections
+```
+
+```typescript
+// src/database/datasource.ts
+import { DataSourceOptions } from 'typeorm';
+import config from '../config/config';
+
+const cfg = config();
+
+export const baseDataSourceOptions: Omit<DataSourceOptions, 'database'> = {
+  type: 'postgres',
+  host: cfg.database.host,
+  port: cfg.database.port,
+  username: cfg.database.username,
+  password: cfg.database.password,
+  entities: [__dirname + '/../**/*.entity{.ts,.js}'],
+  migrations: [__dirname + '/../migrations/*{.ts,.js}'],
+  synchronize: false,
+};
+
+export const masterDataSourceOptions: DataSourceOptions = {
+  ...(baseDataSourceOptions as DataSourceOptions),
+  database: cfg.database.name,
+};
+```
+
+The `master` database uses the exported `masterDataSourceOptions` directly:
+
+```typescript
+// AppModule
+TypeOrmModule.forRoot(masterDataSourceOptions)
+```
+
+---
+
+## 3. Tenant Registry (`master` Database)
+
+A single shared database named **`master`** on the same Postgres instance holds the tenant registry. It is always present regardless of whether multitenancy is enabled.
 
 ### Table: `tenants`
 
-| Column       | Type      | Notes                                                      |
-|--------------|-----------|------------------------------------------------------------|
-| id           | uuid (PK) |                                                            |
-| slug         | varchar   | Unique. Used as the database name and in `x-tenant` / JWT  |
-| name         | varchar   | Display name                                               |
-| is_active    | boolean   | Soft-disable a tenant                                      |
-| created_at   | timestamp |                                                            |
-
-> No `db_url` needed — the connection is built at runtime using the shared config + tenant slug as the database name.
+| Column        | Type      | Notes                                                        |
+|---------------|-----------|--------------------------------------------------------------|
+| id            | uuid (PK) |                                                              |
+| slug          | varchar   | Unique. Used in `x-tenant` / JWT. DB name is `tenant_[slug]` when multitenancy is enabled |
+| name          | varchar   | Display name                                                 |
+| configuration | jsonb     | Tenant-specific settings (feature flags, limits, branding, etc.) |
+| is_active     | boolean   | Soft-disable a tenant                                        |
+| created_at    | timestamp |                                                              |
 
 ---
 
-## 2. Tenant Resolution & Validation
+## 4. Tenant Resolution & Validation
+
+These steps apply regardless of whether multitenancy is enabled.
 
 ### Step 1 — Require `x-tenant` header
 
@@ -47,8 +122,6 @@ x-tenant: acme  +  JWT tenantId: acme   →  PASS
 x-tenant: acme  +  JWT tenantId: globex →  REJECT 401 (token/tenant mismatch)
 ```
 
-This blocks cross-tenant token reuse — a token stolen from a `globex` user cannot be used on the `acme` tenant.
-
 ### Step 3 — Confirm tenant is active
 
 Look up the slug in the `tenants` registry table. If not found or `is_active = false`, reject with `403 Forbidden`.
@@ -67,47 +140,9 @@ Request arrives
 
 ---
 
-## 3. Shared DataSource Config (`datasource.ts`)
+## 5. Tenant Context Propagation (NestJS)
 
-All tenant databases share the same connection options — only the `database` field differs. A base config object is defined once and reused everywhere (tenant provider, migration runner, etc.).
-
-```
-src/
-  database/
-    datasource.ts   # base DataSourceOptions shared by all tenant connections
-```
-
-```typescript
-// src/database/datasource.ts
-import { DataSourceOptions } from 'typeorm';
-
-export const baseDataSourceOptions: Omit<DataSourceOptions, 'database'> = {
-  type: 'postgres',
-  host: process.env.DB_HOST ?? 'localhost',
-  port: Number(process.env.DB_PORT ?? 5432),
-  username: process.env.DB_USER,
-  password: process.env.DB_PASS,
-  entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-  migrations: [__dirname + '/../migrations/*{.ts,.js}'],
-  synchronize: false,
-};
-```
-
-The registry database connection also uses this base, just with `database: 'registry'`:
-
-```typescript
-// used in AppModule TypeOrmModule.forRoot()
-TypeOrmModule.forRoot({
-  ...baseDataSourceOptions,
-  database: 'registry',
-} as DataSourceOptions)
-```
-
----
-
-## 4. Tenant Context Propagation (NestJS)
-
-### 4a. TenantModule structure
+### 5a. TenantModule structure
 
 ```
 src/
@@ -119,7 +154,7 @@ src/
     tenant.decorator.ts     # @CurrentTenant() param decorator
 ```
 
-### 4b. TenantMiddleware
+### 5b. TenantMiddleware
 
 Runs on every request. Enforces the `x-tenant` header and attaches the slug to `req`.
 
@@ -145,7 +180,7 @@ export class TenantModule implements NestModule {
 }
 ```
 
-### 4c. TenantGuard
+### 5c. TenantGuard
 
 Applied to all authenticated routes. Runs after `JwtAuthGuard` and compares `x-tenant` against the JWT `tenantId` claim.
 
@@ -162,9 +197,12 @@ export class TenantGuard implements CanActivate {
 }
 ```
 
-### 4d. Tenant DataSource Provider (`tenant.provider.ts`)
+### 5d. Tenant DataSource Provider (`tenant.provider.ts`)
 
-This is the core of the connection-switching mechanism. It is **REQUEST-scoped** so NestJS creates a new instance per request. `useFactory` receives the raw request via the `REQUEST` token, extracts the tenant slug, and returns a cached (or newly initialized) TypeORM `DataSource` for that tenant's database.
+REQUEST-scoped provider. `useFactory` reads `MULTITENANCY_ENABLED` from config:
+
+- **Enabled** — builds `tenant_${slug}` as the database name and returns a cached or newly initialized `DataSource` for that tenant.
+- **Disabled** — skips per-tenant connection lookup and returns the shared `master` `DataSource` directly. All tenants share the same database.
 
 A module-level `Map` holds the connection cache so connections survive across requests.
 
@@ -175,29 +213,43 @@ import { Scope } from '@nestjs/common';
 import { DataSource, DataSourceOptions } from 'typeorm';
 import { Request } from 'express';
 import { baseDataSourceOptions } from '../database/datasource';
+import config from '../config/config';
 
 export const TENANT_DATASOURCE = 'TENANT_DATASOURCE';
 
-// Cache lives outside the request scope so connections are reused
 const connectionCache = new Map<string, DataSource>();
+
+const masterDs = new DataSource({
+  ...baseDataSourceOptions,
+  database: 'master',
+} as DataSourceOptions);
 
 export const tenantDataSourceProvider = {
   provide: TENANT_DATASOURCE,
   scope: Scope.REQUEST,
   inject: [REQUEST],
   useFactory: async (req: Request): Promise<DataSource> => {
+    const { enabled } = config().multitenancy;
+
+    if (!enabled) {
+      if (!masterDs.isInitialized) await masterDs.initialize();
+      return masterDs;
+    }
+
     const slug = req['tenantSlug'];
     if (!slug) throw new Error('Tenant slug not resolved on request');
 
-    if (connectionCache.has(slug)) return connectionCache.get(slug);
+    const dbName = `tenant_${slug}`;
+
+    if (connectionCache.has(dbName)) return connectionCache.get(dbName);
 
     const ds = new DataSource({
       ...baseDataSourceOptions,
-      database: slug,
+      database: dbName,
     } as DataSourceOptions);
 
     await ds.initialize();
-    connectionCache.set(slug, ds);
+    connectionCache.set(dbName, ds);
     return ds;
   },
 };
@@ -213,7 +265,7 @@ Exported from `TenantModule` so other modules can inject `TENANT_DATASOURCE`:
 export class TenantModule implements NestModule { ... }
 ```
 
-### 4e. Injecting the tenant DataSource in a service
+### 5e. Injecting the tenant DataSource in a service
 
 Any service that needs to query a tenant's database injects `TENANT_DATASOURCE`. Because the provider is REQUEST-scoped, the consuming service must also be REQUEST-scoped.
 
@@ -230,7 +282,7 @@ export class UsersService {
 }
 ```
 
-### 4f. @CurrentTenant() Decorator
+### 5f. @CurrentTenant() Decorator
 
 ```typescript
 export const CurrentTenant = createParamDecorator(
@@ -243,11 +295,13 @@ export const CurrentTenant = createParamDecorator(
 
 ---
 
-## 5. Tenant Database Schema
+## 6. Tenant Database Schema
 
-Each tenant database (`acme`, `globex`, etc.) has the same schema, managed by the shared TypeORM migrations. Isolation is enforced at the connection level — no `tenantId` FK on any row.
+When multitenancy is **enabled**, each tenant database (`tenant_acme`, `tenant_globex`, etc.) has the same schema managed by the shared TypeORM migrations. When multitenancy is **disabled**, the `master` database holds all data and the same migrations apply to it directly.
 
-### Table: `users` (per-tenant DB)
+Isolation is always enforced at the connection level — no `tenantId` FK on any row.
+
+### Table: `users`
 
 | Column     | Type      | Notes                        |
 |------------|-----------|------------------------------|
@@ -260,7 +314,7 @@ Each tenant database (`acme`, `globex`, etc.) has the same schema, managed by th
 
 ---
 
-## 6. JWT Token Design
+## 7. JWT Token Design
 
 Tokens are issued per-tenant. The `tenantId` claim must be embedded at sign time and must match the tenant slug exactly:
 
@@ -274,11 +328,11 @@ this.jwtService.sign({
 
 ---
 
-## 7. Migration Strategy
+## 8. Migration Strategy
 
-All tenant databases share the same schema. The `baseDataSourceOptions` already points to the shared migrations directory, so the same migration files apply to every tenant.
+All databases share the same schema. The `baseDataSourceOptions` points to the shared migrations directory so the same migration files apply everywhere.
 
-**Recommended: CLI migration runner (deploy pipeline)**
+**When `MULTITENANCY_ENABLED=true` — CLI runner per tenant (deploy pipeline)**
 
 ```typescript
 import { baseDataSourceOptions } from './src/database/datasource';
@@ -286,30 +340,48 @@ import { baseDataSourceOptions } from './src/database/datasource';
 const tenants = await registryDs.getRepository(Tenant).findBy({ is_active: true });
 
 for (const tenant of tenants) {
-  const ds = new DataSource({ ...baseDataSourceOptions, database: tenant.slug } as DataSourceOptions);
+  const ds = new DataSource({ ...baseDataSourceOptions, database: `tenant_${tenant.slug}` } as DataSourceOptions);
   await ds.initialize();
   await ds.runMigrations();
   await ds.destroy();
 }
 ```
 
-Run this as a step in the deploy pipeline before restarting the API.
+**When `MULTITENANCY_ENABLED=false` — run once against `master`**
+
+```typescript
+import { baseDataSourceOptions } from './src/database/datasource';
+
+const ds = new DataSource({ ...baseDataSourceOptions, database: 'master' } as DataSourceOptions);
+await ds.initialize();
+await ds.runMigrations();
+await ds.destroy();
+```
+
+Run as a step in the deploy pipeline before restarting the API.
 
 ---
 
-## 8. Provisioning a New Tenant
+## 9. Provisioning a New Tenant
 
-1. Create the database on the Postgres instance: `CREATE DATABASE acme;`
+**When `MULTITENANCY_ENABLED=true`**
+
+1. Create the database: `CREATE DATABASE tenant_acme;`
 2. Run migrations against it via the CLI runner.
-3. Insert a row into the `tenants` registry: `{ slug: 'acme', name: 'Acme Corp', is_active: true }`.
-4. The running API picks it up automatically on the next request — no restart needed.
+3. Insert a row into `tenants`: `{ slug: 'acme', name: 'Acme Corp', is_active: true }`.
+4. The running API picks it up on the next request — no restart needed.
+
+**When `MULTITENANCY_ENABLED=false`**
+
+1. Insert a row into `tenants`: `{ slug: 'acme', name: 'Acme Corp', is_active: true }`.
+2. No new database or migrations needed — all tenants share `master`.
 
 ---
 
-## 9. Security Considerations
+## 10. Security Considerations
 
 - Always compare `x-tenant` header with the JWT `tenantId` claim before executing any query.
 - Never log or expose DB credentials or connection strings.
-- Use a dedicated Postgres role per tenant with access only to its own database.
+- When multitenancy is enabled, use a dedicated Postgres role per tenant with access only to its own database.
 - Rate-limit by `x-tenant` to prevent tenant enumeration.
 - Rotate the shared JWT secret independently from tenant DB credentials.
