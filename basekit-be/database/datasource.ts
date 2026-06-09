@@ -9,9 +9,13 @@ export const baseDataSourceOptions: DataSourceOptions = {
   port: cfg.database.port,
   username: cfg.database.username,
   password: cfg.database.password,
+  schema: 'public',
   entities: [__dirname + '/../**/*.entity{.ts,.js}'],
   migrations: [__dirname + '/../migrations/*{.ts,.js}'],
   synchronize: false,
+  migrationsTableName: 'migrations',
+  migrationsRun: false,
+  logging: false, //process.env.NODE_ENV !== 'production',
 };
 
 export const masterDataSourceOptions = {

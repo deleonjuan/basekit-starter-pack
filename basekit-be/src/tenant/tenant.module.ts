@@ -1,17 +1,20 @@
-import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
+import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Tenant } from "./tenant.entity";
-import { TenantMiddleware } from "./tenant.middleware";
+
 import { TenantGuard } from "./tenant.guard";
 import { tenantDataSourceProvider } from "./tenant.provider";
+import { TenantService } from "./tenant.service";
+import { TenantResolver } from "./tenant.resolver";
 
 @Module({
   imports: [TypeOrmModule.forFeature([Tenant])],
-  providers: [TenantGuard, tenantDataSourceProvider],
+  providers: [
+    TenantGuard,
+    tenantDataSourceProvider,
+    TenantService,
+    TenantResolver,
+  ],
   exports: [TenantGuard, tenantDataSourceProvider],
 })
-export class TenantModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply(TenantMiddleware).forRoutes("*");
-  }
-}
+export class TenantModule {}
