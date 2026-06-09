@@ -14,6 +14,9 @@ import { TenantMiddleware } from "./tenant/tenant.middleware";
 import path from "path";
 
 import { TenantModule } from "./tenant/tenant.module";
+import { AuthModule } from "./auth/auth.module";
+import { UserModule } from "./user/user.module";
+import { RoleModule } from "./role/role.module";
 
 @Module({
   imports: [
@@ -29,6 +32,9 @@ import { TenantModule } from "./tenant/tenant.module";
       }),
     }),
     TenantModule,
+    AuthModule,
+    UserModule,
+    RoleModule,
   ],
   controllers: [AppController],
   providers: [AppResolver],

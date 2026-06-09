@@ -16,7 +16,83 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type Permission {
+  id: ID!
+  value: String!
+  description: String
+  isActive: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type Role {
+  id: ID!
+  name: String!
+  description: String
+  isActive: Boolean!
+  permissions: [Permission!]!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type User {
+  id: ID!
+  username: String!
+  tenantId: ID
+  isSuperAdmin: Boolean!
+  isActive: Boolean!
+  roles: [Role!]!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type AuthPayload {
+  user: User!
+}
+
 type Query {
   health: String!
   tenants: [Tenant!]!
+  users: [User!]!
+  user(id: ID!): User
+  me: User!
+  roles: [Role!]!
+  permissions: [Permission!]!
+}
+
+type Mutation {
+  login(input: LoginInput!): AuthPayload!
+  refreshToken: AuthPayload!
+  logout: Boolean!
+  createUser(input: CreateUserInput!): User!
+  updateUser(id: ID!, input: UpdateUserInput!): User!
+  deleteUser(id: ID!): Boolean!
+  assignRole(userId: ID!, roleId: ID!): User!
+  revokeRole(userId: ID!, roleId: ID!): User!
+  createRole(input: CreateRoleInput!): Role!
+  deleteRole(id: ID!): Boolean!
+  assignPermission(roleId: ID!, permissionId: ID!): Role!
+  revokePermission(roleId: ID!, permissionId: ID!): Role!
+  createPermission(value: String!, description: String): Permission!
+}
+
+input LoginInput {
+  username: String!
+  password: String!
+}
+
+input CreateUserInput {
+  username: String!
+  password: String!
+}
+
+input UpdateUserInput {
+  username: String
+  password: String
+  isActive: Boolean
+}
+
+input CreateRoleInput {
+  name: String!
+  description: String
 }

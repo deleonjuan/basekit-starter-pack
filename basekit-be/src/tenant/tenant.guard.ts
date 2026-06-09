@@ -21,7 +21,11 @@ export class TenantGuard implements CanActivate {
   async canActivate(ctx: ExecutionContext): Promise<boolean> {
     const req = this.getRequest(ctx);
     const headerSlug: string = req["tenantSlug"];
-    const jwtTenantId: string = req.user?.tenantId;
+    const user = req.user;
+
+    if (user?.isSuperAdmin) return true;
+
+    const jwtTenantId: string = user?.tenantId;
 
     if (!jwtTenantId || headerSlug !== jwtTenantId) {
       throw new UnauthorizedException("Tenant mismatch");

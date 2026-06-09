@@ -12,4 +12,12 @@ export default () => ({
   multitenancy: {
     enabled: process.env.MULTITENANCY_ENABLED !== 'false',
   },
+  jwt: {
+    secret: process.env.JWT_SECRET ?? 'changeme',
+    expiresIn: process.env.JWT_EXPIRES_IN ?? '15m',
+    refreshSecret: process.env.JWT_REFRESH_SECRET ?? 'changeme_refresh',
+    refreshExpiresIn: process.env.JWT_REFRESH_EXPIRES_IN ?? '7d',
+    cookieMaxAge: 15 * 60 * 1000,
+    refreshCookieMaxAge: 7 * 24 * 60 * 60 * 1000,
+  },
 });
