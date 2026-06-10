@@ -37,7 +37,10 @@ export class AuthResolver {
   }
 
   @Mutation(() => Boolean)
-  logout(@Context() ctx: { res: Response }): boolean {
+  async logout(
+    @Context() ctx: { req: { cookies: Record<string, string> }; res: Response },
+  ): Promise<boolean> {
+    await this.authService.logout(ctx.req.cookies?.refresh_token);
     ctx.res.clearCookie("access_token");
     ctx.res.clearCookie("refresh_token");
     return true;

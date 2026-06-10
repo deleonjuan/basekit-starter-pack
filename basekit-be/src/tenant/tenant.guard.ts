@@ -6,14 +6,17 @@ import {
   Injectable,
   UnauthorizedException,
 } from "@nestjs/common";
+import { Reflector } from "@nestjs/core";
 import { GqlExecutionContext } from "@nestjs/graphql";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Tenant } from "./tenant.entity";
+import { IS_PUBLIC_KEY } from "../auth/decorators/public.decorator";
 
 @Injectable()
 export class TenantGuard implements CanActivate {
   constructor(
+    private readonly reflector: Reflector,
     @InjectRepository(Tenant)
     private readonly tenantRepository: Repository<Tenant>,
   ) {}
@@ -25,12 +28,19 @@ export class TenantGuard implements CanActivate {
 
     if (user?.isSuperAdmin) return true;
 
-    const jwtTenantId: string = user?.tenantId;
+    const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
+      ctx.getHandler(),
+      ctx.getClass(),
+    ]);
 
-    if (!jwtTenantId || headerSlug !== jwtTenantId) {
-      throw new UnauthorizedException("Tenant mismatch");
+    // on authenticated routes the JWT tenantId claim must match the header
+    if (!isPublic) {
+      if (!user?.tenantId || headerSlug !== user.tenantId) {
+        throw new UnauthorizedException("Tenant mismatch");
+      }
     }
 
+    // always verify the tenant exists and is active
     const tenant = await this.tenantRepository.findOneBy({
       slug: headerSlug,
       isActive: true,

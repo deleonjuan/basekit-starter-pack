@@ -15,6 +15,11 @@ import { TenantResolver } from "./tenant.resolver";
     TenantService,
     TenantResolver,
   ],
-  exports: [TenantGuard, tenantDataSourceProvider],
+  exports: [
+    TenantGuard,
+    tenantDataSourceProvider,
+    TenantService,
+    TypeOrmModule,
+  ],
 })
 export class TenantModule {}

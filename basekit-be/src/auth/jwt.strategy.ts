@@ -10,6 +10,7 @@ export interface JwtPayload {
   username: string;
   tenantId: string | null;
   isSuperAdmin: boolean;
+  jti?: string; // present only on refresh tokens
 }
 
 @Injectable()

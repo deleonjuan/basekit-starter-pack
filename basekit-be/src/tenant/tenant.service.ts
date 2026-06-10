@@ -13,4 +13,8 @@ export class TenantService {
   findAll(): Promise<Tenant[]> {
     return this.tenantRepository.find();
   }
+
+  findById(id: string): Promise<Tenant | null> {
+    return this.tenantRepository.findOneBy({ id, isActive: true });
+  }
 }
