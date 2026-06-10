@@ -51,7 +51,8 @@ export class AuthService {
     return this.buildTokens(user, tenantSlug);
   }
 
-  async refresh(refreshToken: string): Promise<TokenResult> {
+  async refresh(refreshToken: string | undefined): Promise<TokenResult> {
+    if (!refreshToken) throw new UnauthorizedException("Invalid refresh token");
     let decoded: JwtPayload;
     try {
       decoded = this.jwtService.verify(refreshToken, {
@@ -85,16 +86,10 @@ export class AuthService {
   async logout(refreshToken: string | undefined): Promise<void> {
     if (!refreshToken) return;
 
-    let decoded: JwtPayload;
-    try {
-      decoded = this.jwtService.verify(refreshToken, {
-        secret: config().jwt.refreshSecret,
-      });
-    } catch {
-      return;
-    }
-
-    if (decoded.jti) {
+    // decode without verifying — we only need the jti to delete the row.
+    // verify() would throw on expired tokens and silently skip the DB cleanup.
+    const decoded = this.jwtService.decode(refreshToken) as JwtPayload | null;
+    if (decoded?.jti) {
       await this.ds.getRepository(RefreshToken).delete({ id: decoded.jti });
     }
   }

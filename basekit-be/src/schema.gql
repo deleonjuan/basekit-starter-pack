@@ -9,6 +9,7 @@ type Tenant {
   configuration: String
   isActive: Boolean!
   createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 """
@@ -60,6 +61,7 @@ type Query {
 }
 
 type Mutation {
+  deactivateTenant(id: ID!): Tenant!
   login(input: LoginInput!): AuthPayload!
   refreshToken: AuthPayload!
   logout: Boolean!

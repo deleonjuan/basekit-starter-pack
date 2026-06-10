@@ -12,6 +12,7 @@ export class InitialSchema1780876800000 implements MigrationInterface {
         "configuration" jsonb,
         "is_active"     boolean             NOT NULL DEFAULT true,
         "created_at"    TIMESTAMPTZ         NOT NULL DEFAULT NOW(),
+        "updated_at"    TIMESTAMPTZ         NOT NULL DEFAULT NOW(),
         CONSTRAINT "UQ_tenants_slug" UNIQUE ("slug"),
         CONSTRAINT "PK_tenants"      PRIMARY KEY ("id")
       )

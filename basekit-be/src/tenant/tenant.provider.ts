@@ -1,4 +1,5 @@
 /* eslint-disable */
+import { BadRequestException } from "@nestjs/common";
 import { REQUEST } from "@nestjs/core";
 import { Scope } from "@nestjs/common";
 import { DataSource, DataSourceOptions } from "typeorm";
@@ -9,6 +10,15 @@ import config from "../../config/config";
 export const TENANT_DATASOURCE = "TENANT_DATASOURCE";
 
 const connectionCache = new Map<string, DataSource>();
+
+export function evictTenantConnection(slug: string): void {
+  const dbName = `tenant_${slug}`;
+  const ds = connectionCache.get(dbName);
+  if (ds) {
+    ds.isInitialized && ds.destroy().catch(() => undefined);
+    connectionCache.delete(dbName);
+  }
+}
 
 const masterDs = new DataSource({
   ...baseDataSourceOptions,
@@ -29,6 +39,10 @@ export const tenantDataSourceProvider = {
 
     const slug = req["tenantSlug"];
     if (!slug) throw new Error("Tenant slug not resolved on request");
+
+    if (!/^[a-z0-9_-]+$/.test(slug)) {
+      throw new BadRequestException("Invalid tenant slug format");
+    }
 
     const dbName = `tenant_${slug}`;
 

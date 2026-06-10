@@ -4,6 +4,7 @@ import {
   CreateDateColumn,
   Entity,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from "typeorm";
 
 @ObjectType()
@@ -36,4 +37,8 @@ export class Tenant {
     default: () => "NOW()",
   })
   createdAt!: Date;
+
+  @Field()
+  @UpdateDateColumn({ name: "updated_at", type: "timestamptz" })
+  updatedAt!: Date;
 }

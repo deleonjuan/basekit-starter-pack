@@ -4,7 +4,10 @@ import config from '../config/config';
 const cfg = config();
 const isTsRuntime = __filename.endsWith('.ts');
 
-export const baseDataSourceOptions: DataSourceOptions = {
+// Isolate the postgres variant and remove `database` so callers are forced to supply it.
+type PostgresBaseOptions = Omit<Extract<DataSourceOptions, { type: 'postgres' }>, 'database'>;
+
+export const baseDataSourceOptions: PostgresBaseOptions = {
   type: 'postgres',
   host: cfg.database.host,
   port: cfg.database.port,
