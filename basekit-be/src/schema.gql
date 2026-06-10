@@ -51,7 +51,6 @@ type AuthPayload {
 }
 
 type Query {
-  health: String!
   tenants: [Tenant!]!
   users: [User!]!
   user(id: ID!): User

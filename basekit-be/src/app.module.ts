@@ -8,7 +8,6 @@ import { GraphQLModule } from "@nestjs/graphql";
 import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { AppController } from "./app.controller";
-import { AppResolver } from "./app.resolver";
 import { masterDataSourceOptions } from "../database/datasource";
 import { TenantMiddleware } from "./tenant/tenant.middleware";
 import path from "path";
@@ -37,7 +36,6 @@ import { RoleModule } from "./role/role.module";
     RoleModule,
   ],
   controllers: [AppController],
-  providers: [AppResolver],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

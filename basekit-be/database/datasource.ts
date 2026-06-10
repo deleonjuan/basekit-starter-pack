@@ -2,6 +2,7 @@ import { DataSource, DataSourceOptions } from 'typeorm';
 import config from '../config/config';
 
 const cfg = config();
+const isTsRuntime = __filename.endsWith('.ts');
 
 export const baseDataSourceOptions: DataSourceOptions = {
   type: 'postgres',
@@ -10,12 +11,15 @@ export const baseDataSourceOptions: DataSourceOptions = {
   username: cfg.database.username,
   password: cfg.database.password,
   schema: 'public',
-  entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-  migrations: [__dirname + '/../migrations/*{.ts,.js}'],
   synchronize: false,
   migrationsTableName: 'migrations',
   migrationsRun: false,
-  logging: false, //process.env.NODE_ENV !== 'production',
+  logging: false,
+  entities: isTsRuntime ? ['src/**/*.entity.ts'] : ['dist/**/*.entity.js'],
+  migrations: isTsRuntime
+    ? ['database/migrations/*.ts']
+    : ['dist/database/migrations/*.js'],
+  
 };
 
 export const masterDataSourceOptions = {
@@ -23,5 +27,5 @@ export const masterDataSourceOptions = {
   database: cfg.database.name,
 } as DataSourceOptions;
 
-const dataSource = new DataSource(baseDataSourceOptions);
+const dataSource = new DataSource(masterDataSourceOptions);
 export default dataSource;

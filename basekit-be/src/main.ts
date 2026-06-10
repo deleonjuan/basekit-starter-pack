@@ -13,7 +13,7 @@ async function bootstrap() {
     origin: true,
     credentials: true,
     methods: ["GET", "POST"],
-    allowedHeaders: ["Content-Type", "Authorization", "x-tenant"],
+    allowedHeaders: ["Content-Type", "x-tenant"],
   });
 
   await app.listen(port);
