@@ -35,10 +35,13 @@ export class TenantGuard implements CanActivate {
 
     // on authenticated routes the JWT tenantId claim must match the header
     if (!isPublic) {
-      if (!user?.tenantId || headerSlug !== user.tenantId) {
+      if (!headerSlug || !user?.tenantId || headerSlug !== user.tenantId) {
         throw new UnauthorizedException("Tenant mismatch");
       }
     }
+
+    // public routes without a tenant header (e.g. health checks) skip tenant lookup
+    if (!headerSlug) return true;
 
     // always verify the tenant exists and is active
     const tenant = await this.tenantRepository.findOneBy({

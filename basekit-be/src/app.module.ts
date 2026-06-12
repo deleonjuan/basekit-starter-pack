@@ -10,6 +10,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { AppController } from "./app.controller";
 import { masterDataSourceOptions } from "../database/datasource";
 import { TenantMiddleware } from "./tenant/tenant.middleware";
+import { ConfigModule } from "@nestjs/config";
 import path from "path";
 
 import { TenantModule } from "./tenant/tenant.module";
@@ -19,6 +20,7 @@ import { RoleModule } from "./role/role.module";
 
 @Module({
   imports: [
+    ConfigModule.forRoot(),
     TypeOrmModule.forRoot(masterDataSourceOptions),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
@@ -41,7 +43,6 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(TenantMiddleware)
-      .exclude({ path: "health", method: RequestMethod.GET })
-      .forRoutes({ path: "api/graphql", method: RequestMethod.POST });
+      .forRoutes({ path: "/api/graphql", method: RequestMethod.POST });
   }
 }

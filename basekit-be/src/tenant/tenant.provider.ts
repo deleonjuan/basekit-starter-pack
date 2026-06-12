@@ -37,7 +37,7 @@ export const tenantDataSourceProvider = {
       return masterDs;
     }
 
-    const slug = req["tenantSlug"];
+    const slug = req["req"]["tenantSlug"];
     if (!slug) throw new Error("Tenant slug not resolved on request");
 
     if (!/^[a-z0-9_-]+$/.test(slug)) {
