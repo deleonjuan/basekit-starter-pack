@@ -51,7 +51,10 @@ const FormFieldContainer = ({
 }) => {
   const { state } = useForm();
 
-  if (fieldInput.visible !== undefined && !fieldInput.visible(state.values as any)) {
+  if (
+    fieldInput.visible !== undefined &&
+    !fieldInput.visible(state.values as any)
+  ) {
     return null;
   }
 
