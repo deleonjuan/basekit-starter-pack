@@ -1,17 +1,16 @@
 import { useEffect } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { useGetCurrentUser } from "../queries/getCurrentUser";
+import { useGetCurrentUser } from "../queries/getCurrentUser.query";
 
 interface AuthGuardProps {
   children: React.ReactNode;
-  requireAdmin?: boolean;
 }
 
-export function AuthGuard({ children, requireAdmin = false }: AuthGuardProps) {
+export function AuthGuard({ children }: AuthGuardProps) {
   const { data, loading, error } = useGetCurrentUser();
   const navigate = useNavigate();
 
-  const user = data?.currentUser;
+  const user = data?.me;
 
   useEffect(() => {
     if (loading) return;
@@ -20,11 +19,7 @@ export function AuthGuard({ children, requireAdmin = false }: AuthGuardProps) {
       navigate({ to: "/login" });
       return;
     }
-
-    if (requireAdmin && user.role !== "admin") {
-      navigate({ to: "/" });
-    }
-  }, [loading, user, error, requireAdmin, navigate]);
+  }, [loading, user, error, navigate]);
 
   if (loading) {
     return (
@@ -35,8 +30,6 @@ export function AuthGuard({ children, requireAdmin = false }: AuthGuardProps) {
   }
 
   if (!user || error) return null;
-
-  if (requireAdmin && user.role !== "admin") return null;
 
   return <>{children}</>;
 }

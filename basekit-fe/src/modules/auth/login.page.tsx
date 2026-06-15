@@ -1,15 +1,17 @@
+import { useNavigate } from "@tanstack/react-router";
 import { FormGenerator, useAppForm, field } from "#/lib/form-generator";
 import type { FormSchemaField } from "#/lib/form-generator";
 import { Button } from "#/components/ui/button";
+import { useLogin } from "./queries/login.mutation";
 
 const formSchema: FormSchemaField[] = [
   {
     fields: [
       field.textField({
-        name: "email",
-        label: "Email",
-        type: "email",
-        placeholder: "you@example.com",
+        name: "username",
+        label: "Username",
+        type: "text",
+        placeholder: "your-username",
       }),
       field.textField({
         name: "password",
@@ -22,10 +24,16 @@ const formSchema: FormSchemaField[] = [
 ];
 
 export function LoginPage() {
+  const navigate = useNavigate();
+  const [login, { loading, error }] = useLogin();
+
   const form = useAppForm({
-    defaultValues: { email: "", password: "" },
+    defaultValues: { username: "", password: "" },
     onSubmit: async ({ value }) => {
-      console.log(value);
+      await login({
+        variables: { input: value },
+        onCompleted: () => navigate({ to: "/" }),
+      });
     },
   });
 
@@ -50,8 +58,18 @@ export function LoginPage() {
         >
           <FormGenerator form={form} formSchema={formSchema} />
 
-          <Button type="submit" className="w-full rounded-full">
-            Sign in
+          {error && (
+            <p className="text-sm text-red-500">
+              {error.message ?? "Invalid credentials."}
+            </p>
+          )}
+
+          <Button
+            type="submit"
+            className="w-full rounded-full"
+            disabled={loading}
+          >
+            {loading ? "Signing in…" : "Sign in"}
           </Button>
         </form>
       </div>

@@ -7,7 +7,7 @@ export const Route = createFileRoute("/_admin")({
 
 function AdminLayout() {
   return (
-    <AuthGuard requireAdmin>
+    <AuthGuard>
       <Outlet />
     </AuthGuard>
   );

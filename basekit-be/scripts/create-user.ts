@@ -8,6 +8,9 @@ import { Tenant } from "../src/tenant/tenant.entity";
 import { User } from "../src/user/entities/user.entity";
 import config from "../config/config";
 
+// Load .env before config() is evaluated inside main() (Node 20.12+)
+(process as any).loadEnvFile?.();
+
 function parseArgs(): Record<string, string | boolean> {
   const args = process.argv.slice(2);
   const result: Record<string, string | boolean> = {};
@@ -31,6 +34,7 @@ async function main(): Promise<void> {
   const isSuperAdmin =
     args["super-admin"] === true || args["super-admin"] === "true";
   const tenantSlug = args.tenant as string | undefined;
+  const { enabled: multitenancyEnabled } = config().multitenancy;
 
   if (!username || !password) {
     console.error(
@@ -39,8 +43,8 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 
-  if (!isSuperAdmin && !tenantSlug) {
-    console.error("--tenant <slug> is required for non-super-admin users");
+  if (!isSuperAdmin && multitenancyEnabled && !tenantSlug) {
+    console.error("--tenant <slug> is required when multitenancy is enabled");
     process.exit(1);
   }
 
@@ -48,6 +52,7 @@ async function main(): Promise<void> {
   const masterDs = new DataSource(masterDataSourceOptions);
   await masterDs.initialize();
 
+  // Super admins always go in the master DB
   if (isSuperAdmin) {
     const user = masterDs.getRepository(User).create({
       username,
@@ -62,6 +67,22 @@ async function main(): Promise<void> {
     return;
   }
 
+  // Multitenancy disabled: write regular users to the master DB
+  if (!multitenancyEnabled) {
+    const user = masterDs.getRepository(User).create({
+      username,
+      password: hashedPassword,
+      tenantId: null,
+      isSuperAdmin: false,
+      isActive: true,
+    });
+    const saved = await masterDs.getRepository(User).save(user);
+    console.log(`✓ Created user: ${saved.username} (id: ${saved.id})`);
+    await masterDs.destroy();
+    return;
+  }
+
+  // Multitenancy enabled: verify tenant and write to the tenant DB
   const tenant = await masterDs
     .getRepository(Tenant)
     .findOneBy({ slug: tenantSlug, isActive: true });
@@ -72,32 +93,25 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 
-  const { enabled: multitenancyEnabled } = config().multitenancy;
+  const tenantDs = new DataSource({
+    ...(baseDataSourceOptions as any),
+    database: `tenant_${tenantSlug}`,
+  } as DataSourceOptions);
+  await tenantDs.initialize();
 
-  let userDs: DataSource;
-  if (multitenancyEnabled) {
-    userDs = new DataSource({
-      ...(baseDataSourceOptions as any),
-      database: `tenant_${tenantSlug}`,
-    } as DataSourceOptions);
-    await userDs.initialize();
-  } else {
-    userDs = masterDs;
-  }
-
-  const user = userDs.getRepository(User).create({
+  const user = tenantDs.getRepository(User).create({
     username,
     password: hashedPassword,
     tenantId: tenant.id,
     isSuperAdmin: false,
     isActive: true,
   });
-  const saved = await userDs.getRepository(User).save(user);
+  const saved = await tenantDs.getRepository(User).save(user);
   console.log(
     `✓ Created user: ${saved.username} (id: ${saved.id}, tenant: ${tenantSlug})`,
   );
 
-  if (multitenancyEnabled) await userDs.destroy();
+  await tenantDs.destroy();
   await masterDs.destroy();
 }
 

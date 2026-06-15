@@ -12,6 +12,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Tenant } from "./tenant.entity";
 import { IS_PUBLIC_KEY } from "../auth/decorators/public.decorator";
+import config from "config/config";
 
 @Injectable()
 export class TenantGuard implements CanActivate {
@@ -22,6 +23,8 @@ export class TenantGuard implements CanActivate {
   ) {}
 
   async canActivate(ctx: ExecutionContext): Promise<boolean> {
+    if (!config().multitenancy.enabled) return true;
+
     const req = this.getRequest(ctx);
     const headerSlug: string = req["tenantSlug"];
     const user = req.user;
