@@ -1,8 +1,5 @@
 import type { ReactNode } from "react";
-import {
-  SidebarInset,
-  SidebarProvider,
-} from "#/components/ui/sidebar.tsx";
+import { SidebarInset, SidebarProvider } from "#/components/ui/sidebar.tsx";
 import { Sidebar, type SidebarItem } from "./Sidebar";
 
 interface LayoutWrapperProps {
@@ -14,9 +11,7 @@ export function LayoutWrapper({ children, sidebarItems }: LayoutWrapperProps) {
   return (
     <SidebarProvider>
       <Sidebar items={sidebarItems} />
-      <SidebarInset>
-        {children}
-      </SidebarInset>
+      <SidebarInset>{children}</SidebarInset>
     </SidebarProvider>
   );
 }

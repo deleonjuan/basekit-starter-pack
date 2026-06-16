@@ -99,7 +99,6 @@ function AppPage({
   goBackLink,
   classNames,
 }: AppPageProps) {
-
   return (
     <div className="min-h-screen flex flex-col">
       {title && (
