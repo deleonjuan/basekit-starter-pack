@@ -1,10 +1,11 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
-import { LayoutDashboard, Settings } from "lucide-react";
+import { LayoutDashboard, Settings, Users } from "lucide-react";
 import { AuthGuard } from "#/modules/auth/components";
 import { LayoutWrapper, type SidebarItem } from "#/lib/universal-layout";
 
 const ADMIN_NAV: SidebarItem[] = [
   { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
+  { label: "Users", href: "/admin/users", icon: Users },
   { label: "Settings", href: "/admin/settings", icon: Settings },
 ];
 

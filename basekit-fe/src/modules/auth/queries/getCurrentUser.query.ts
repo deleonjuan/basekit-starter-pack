@@ -17,6 +17,7 @@ export const GET_CURRENT_USER_QUERY: TypedDocumentNode<
     me {
       id
       username
+      isSuperAdmin
     }
   }
 `;

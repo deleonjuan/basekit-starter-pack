@@ -32,7 +32,7 @@ export function LoginPage() {
     onSubmit: async ({ value }) => {
       await login({
         variables: { input: value },
-        onCompleted: () => navigate({ to: "/" }),
+        onCompleted: () => navigate({ to: "/admin" }),
       });
     },
   });

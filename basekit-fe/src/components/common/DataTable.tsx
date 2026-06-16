@@ -221,7 +221,7 @@ export default function DataTable({
     <div className="flex flex-col h-full">
       {header}
       <div className="relative flex h-full mt-2">
-        <ScrollArea className="absolute inset-0 rounded-md">
+        <ScrollArea className="absolute inset-0 rounded-md w-full">
           <CoreTable
             table={table}
             columns={columns}

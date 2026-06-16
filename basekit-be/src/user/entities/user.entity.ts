@@ -15,37 +15,41 @@ import { Role } from "../../role/entities/role.entity";
 export class User {
   @Field(() => ID)
   @PrimaryGeneratedColumn("uuid")
-  id: string;
+  id!: string;
 
   @Field()
   @Column({ unique: true })
-  username: string;
+  username!: string;
 
   @Column()
-  password: string;
+  password!: string;
 
   @Field(() => ID, { nullable: true })
   @Column({ name: "tenant_id", type: "uuid", nullable: true })
-  tenantId: string | null;
+  tenantId!: string | null;
 
   @Field()
   @Column({ name: "is_super_admin", default: false })
-  isSuperAdmin: boolean;
+  isSuperAdmin!: boolean;
 
   @Field()
   @Column({ name: "is_active", default: true })
-  isActive: boolean;
+  isActive!: boolean;
 
   @Field(() => [Role])
   @ManyToMany(() => Role, { eager: false })
-  @JoinTable({ name: "user_roles" })
-  roles: Role[];
+  @JoinTable({
+    name: "user_roles",
+    joinColumn: { name: "user_id", referencedColumnName: "id" },
+    inverseJoinColumn: { name: "role_id", referencedColumnName: "id" },
+  })
+  roles!: Role[];
 
   @Field()
   @CreateDateColumn({ name: "created_at", type: "timestamptz" })
-  createdAt: Date;
+  createdAt!: Date;
 
   @Field()
   @UpdateDateColumn({ name: "updated_at", type: "timestamptz" })
-  updatedAt: Date;
+  updatedAt!: Date;
 }
