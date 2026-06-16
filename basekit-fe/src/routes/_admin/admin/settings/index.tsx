@@ -1,3 +1,4 @@
+import { AppPage } from "#/lib/universal-layout/";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_admin/admin/settings/")({
@@ -6,8 +7,8 @@ export const Route = createFileRoute("/_admin/admin/settings/")({
 
 function AdminSettings() {
   return (
-    <div className="p-8">
-      <h1 className="text-3xl font-bold">Settings</h1>
-    </div>
+    <AppPage title="Settings">
+      <p>Settings page</p>
+    </AppPage>
   );
 }

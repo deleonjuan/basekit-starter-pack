@@ -1,5 +1,12 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
+import { LayoutDashboard, Settings } from "lucide-react";
 import { AuthGuard } from "#/modules/auth/components";
+import { LayoutWrapper, type SidebarItem } from "#/lib/universal-layout";
+
+const ADMIN_NAV: SidebarItem[] = [
+  { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
+  { label: "Settings", href: "/admin/settings", icon: Settings },
+];
 
 export const Route = createFileRoute("/_admin")({
   component: AdminLayout,
@@ -8,7 +15,9 @@ export const Route = createFileRoute("/_admin")({
 function AdminLayout() {
   return (
     <AuthGuard>
-      <Outlet />
+      <LayoutWrapper sidebarItems={ADMIN_NAV}>
+        <Outlet />
+      </LayoutWrapper>
     </AuthGuard>
   );
 }
