@@ -10,7 +10,13 @@ export interface User {
 }
 
 export interface GetUsersData {
-  users: User[];
+  users: {
+    data: User[];
+    page: number;
+    total: number;
+    perPage: number;
+    totalPages: number;
+  };
 }
 
 export const GET_USERS_QUERY: TypedDocumentNode<
@@ -18,15 +24,29 @@ export const GET_USERS_QUERY: TypedDocumentNode<
   Record<string, never>
 > = gql`
   query GetUsers {
-    users {
-      id
-      username
-      isActive
-      createdAt
+    users(pagination: { page: 1, limit: 20 }) {
+      data {
+        id
+        username
+        isActive
+        createdAt
+      }
+      page
+      total
+      perPage
+      totalPages
     }
   }
 `;
 
 export function useGetUsers() {
-  return useQuery(GET_USERS_QUERY);
+  const { data, ...res } = useQuery(GET_USERS_QUERY);
+
+  return {
+    ...res,
+    data: {
+      ...data?.users,
+      users: data?.users.data,
+    },
+  };
 }

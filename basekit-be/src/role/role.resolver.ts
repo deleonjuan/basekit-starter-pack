@@ -3,16 +3,22 @@ import { Role } from "./entities/role.entity";
 import { Permission } from "./entities/permission.entity";
 import { RoleService } from "./role.service";
 import { CreateRoleInput } from "./dto/create-role.input";
+import { PaginationInput } from "../common/dto/pagination.input";
+import { PaginatedRoles } from "./types/paginated-roles.type";
+import { PaginatedPermissions } from "./types/paginated-permissions.type";
+import { IPaginatedResult } from "../common/types/paginated-result.type";
 import { RequirePermissions } from "../auth/decorators/permissions.decorator";
 
 @Resolver(() => Role)
 export class RoleResolver {
   constructor(private readonly roleService: RoleService) {}
 
-  @Query(() => [Role], { name: "roles" })
+  @Query(() => PaginatedRoles, { name: "roles" })
   @RequirePermissions("read:role")
-  findAll(): Promise<Role[]> {
-    return this.roleService.findAll();
+  findAll(
+    @Args("pagination", { nullable: true }) pagination?: PaginationInput,
+  ): Promise<IPaginatedResult<Role>> {
+    return this.roleService.findAll(pagination);
   }
 
   @Mutation(() => Role, { name: "createRole" })
@@ -45,10 +51,12 @@ export class RoleResolver {
     return this.roleService.revokePermission(roleId, permissionId);
   }
 
-  @Query(() => [Permission], { name: "permissions" })
+  @Query(() => PaginatedPermissions, { name: "permissions" })
   @RequirePermissions("read:permission")
-  findAllPermissions(): Promise<Permission[]> {
-    return this.roleService.findAllPermissions();
+  findAllPermissions(
+    @Args("pagination", { nullable: true }) pagination?: PaginationInput,
+  ): Promise<IPaginatedResult<Permission>> {
+    return this.roleService.findAllPermissions(pagination);
   }
 
   @Mutation(() => Permission, { name: "createPermission" })

@@ -1,5 +1,5 @@
 import { AppPage } from "#/lib/universal-layout/";
-import DataTable from "#/components/common/DataTable";
+import DataTable, { type IPagination } from "#/components/common/DataTable";
 import type { ColumnDef } from "@tanstack/react-table";
 import { useGetUsers } from "./queries/users.query";
 import type { User } from "./queries/users.query";
@@ -31,14 +31,18 @@ const columns: ColumnDef<User>[] = [
 ];
 
 export function UsersPage() {
-  const { data, loading } = useGetUsers();
+  const {
+    data: { users, ...pagination },
+    loading,
+  } = useGetUsers();
 
   return (
     <AppPage title="Users">
       <DataTable
         columns={columns}
-        data={data?.users ?? []}
+        data={users ?? []}
         isLoading={loading}
+        pagination={pagination as IPagination}
       />
     </AppPage>
   );

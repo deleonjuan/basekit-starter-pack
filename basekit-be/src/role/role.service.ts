@@ -4,6 +4,9 @@ import { TENANT_DATASOURCE } from "../tenant/tenant.provider";
 import { Role } from "./entities/role.entity";
 import { Permission } from "./entities/permission.entity";
 import { CreateRoleInput } from "./dto/create-role.input";
+import { PaginationInput } from "../common/dto/pagination.input";
+import { IPaginatedResult } from "../common/types/paginated-result.type";
+import { findMany } from "../common/utils/find-many.util";
 
 @Injectable({ scope: Scope.REQUEST })
 export class RoleService {
@@ -17,8 +20,8 @@ export class RoleService {
     return this.ds.getRepository(Permission);
   }
 
-  findAll(): Promise<Role[]> {
-    return this.roleRepo.find();
+  findAll(pagination: PaginationInput = {}): Promise<IPaginatedResult<Role>> {
+    return findMany(this.roleRepo, pagination);
   }
 
   async findOne(id: string): Promise<Role> {
@@ -66,8 +69,10 @@ export class RoleService {
     return this.roleRepo.save(role);
   }
 
-  findAllPermissions(): Promise<Permission[]> {
-    return this.permRepo.find();
+  findAllPermissions(
+    pagination: PaginationInput = {},
+  ): Promise<IPaginatedResult<Permission>> {
+    return findMany(this.permRepo, pagination);
   }
 
   async createPermission(

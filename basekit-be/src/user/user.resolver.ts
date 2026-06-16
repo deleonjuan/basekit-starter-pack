@@ -3,6 +3,9 @@ import { User } from "./entities/user.entity";
 import { UserService } from "./user.service";
 import { CreateUserInput } from "./dto/create-user.input";
 import { UpdateUserInput } from "./dto/update-user.input";
+import { PaginationInput } from "../common/dto/pagination.input";
+import { PaginatedUsers } from "./types/paginated-users.type";
+import { IPaginatedResult } from "../common/types/paginated-result.type";
 import { RequirePermissions } from "../auth/decorators/permissions.decorator";
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
 import type { JwtPayload } from "../auth/jwt.strategy";
@@ -11,10 +14,12 @@ import type { JwtPayload } from "../auth/jwt.strategy";
 export class UserResolver {
   constructor(private readonly userService: UserService) {}
 
-  @Query(() => [User], { name: "users" })
+  @Query(() => PaginatedUsers, { name: "users" })
   @RequirePermissions("read:user")
-  findAll(): Promise<User[]> {
-    return this.userService.findAll();
+  findAll(
+    @Args("pagination", { nullable: true }) pagination?: PaginationInput,
+  ): Promise<IPaginatedResult<User>> {
+    return this.userService.findAll(pagination);
   }
 
   @Query(() => User, { nullable: true, name: "user" })

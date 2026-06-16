@@ -3,6 +3,9 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Tenant } from "./tenant.entity";
 import { evictTenantConnection } from "./tenant.provider";
+import { PaginationInput } from "../common/dto/pagination.input";
+import { IPaginatedResult } from "../common/types/paginated-result.type";
+import { findMany } from "../common/utils/find-many.util";
 
 @Injectable()
 export class TenantService {
@@ -11,8 +14,8 @@ export class TenantService {
     private readonly tenantRepository: Repository<Tenant>,
   ) {}
 
-  findAll(): Promise<Tenant[]> {
-    return this.tenantRepository.find();
+  findAll(pagination: PaginationInput = {}): Promise<IPaginatedResult<Tenant>> {
+    return findMany(this.tenantRepository, pagination);
   }
 
   findById(id: string): Promise<Tenant | null> {
