@@ -68,12 +68,14 @@ const FormFieldContainer = ({
       validators={fieldInput.validators}
       children={(field: any) => (
         <Field className={fieldVariants({ variant })}>
-          <FieldLabel
-            className={`mb-1 ${labelStyle} ${isModal ? "w-2/4!" : ""}`}
-            htmlFor={field.name}
-          >
-            {fieldInput.label}
-          </FieldLabel>
+          {fieldInput.label && (
+            <FieldLabel
+              className={`mb-1 ${labelStyle} ${isModal ? "w-2/4!" : ""}`}
+              htmlFor={field.name}
+            >
+              {fieldInput.label}
+            </FieldLabel>
+          )}
           <div className="w-full">
             <FieldInput field={field} fieldInput={fieldInput} form={form} />
             <field.ValidationError />

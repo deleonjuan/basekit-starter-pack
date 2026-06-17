@@ -29,6 +29,7 @@ export const TextField = ({
       onBlur={field.handleBlur}
       disabled={disabled}
       aria-invalid={field.state.meta.errors.length > 0}
+      className="disabled:opacity-100! disabled:border-transparent disabled:shadow-none"
     />
   );
 };

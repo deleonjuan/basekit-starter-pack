@@ -150,26 +150,21 @@ function CoreTable({
   noInfoBanner,
   className = "",
 }: CoreTableProps) {
-  if (!table.getRowModel().rows?.length && !isLoading) {
-    return (
-      <>
-        {noInfoBanner ?? (
-          <NoInfoBanner className="h-auto bg-muted py-4 rounded mt-2" />
-        )}
-      </>
-    );
-  }
+  const isEmpty = !table.getRowModel().rows?.length && !isLoading;
 
   return (
-    <Table className={`border-b ${className}`}>
-      <DataTableHeader table={table} className="shadow-none" />
-      <DataTableBody
-        table={table}
-        isLoading={isLoading}
-        colSpan={columns.length}
-        onRowClick={onRowClick}
-      />
-    </Table>
+    <>
+      <Table className={`border-b ${className}`}>
+        <DataTableHeader table={table} className="shadow-none" />
+        <DataTableBody
+          table={table}
+          isLoading={isLoading}
+          colSpan={columns.length}
+          onRowClick={onRowClick}
+        />
+      </Table>
+      {isEmpty && noInfoBanner}
+    </>
   );
 }
 
@@ -204,6 +199,7 @@ export default function DataTable({
   pagination,
   isLoading = false,
   header,
+  noInfoBanner,
   onRowClick,
 }: CustomDataTableProps) {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -227,7 +223,7 @@ export default function DataTable({
             columns={columns}
             isLoading={isLoading}
             onRowClick={onRowClick}
-            noInfoBanner={<NoInfoBanner />}
+            noInfoBanner={noInfoBanner ?? <NoInfoBanner />}
             className="table-fixed"
           />
         </ScrollArea>
