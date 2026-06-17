@@ -15,6 +15,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminAdminIndexRouteImport } from './routes/_admin/admin/index'
 import { Route as AdminAdminUsersIndexRouteImport } from './routes/_admin/admin/users/index'
 import { Route as AdminAdminSettingsIndexRouteImport } from './routes/_admin/admin/settings/index'
+import { Route as AdminAdminRolesIndexRouteImport } from './routes/_admin/admin/roles/index'
 import { Route as AdminAdminUsersNewRouteImport } from './routes/_admin/admin/users/new'
 import { Route as AdminAdminUsersUserIdRouteImport } from './routes/_admin/admin/users/$userId'
 
@@ -47,6 +48,11 @@ const AdminAdminSettingsIndexRoute = AdminAdminSettingsIndexRouteImport.update({
   path: '/admin/settings/',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminAdminRolesIndexRoute = AdminAdminRolesIndexRouteImport.update({
+  id: '/admin/roles/',
+  path: '/admin/roles/',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminAdminUsersNewRoute = AdminAdminUsersNewRouteImport.update({
   id: '/admin/users/new',
   path: '/admin/users/new',
@@ -64,6 +70,7 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AdminAdminIndexRoute
   '/admin/users/$userId': typeof AdminAdminUsersUserIdRoute
   '/admin/users/new': typeof AdminAdminUsersNewRoute
+  '/admin/roles/': typeof AdminAdminRolesIndexRoute
   '/admin/settings/': typeof AdminAdminSettingsIndexRoute
   '/admin/users/': typeof AdminAdminUsersIndexRoute
 }
@@ -73,6 +80,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminAdminIndexRoute
   '/admin/users/$userId': typeof AdminAdminUsersUserIdRoute
   '/admin/users/new': typeof AdminAdminUsersNewRoute
+  '/admin/roles': typeof AdminAdminRolesIndexRoute
   '/admin/settings': typeof AdminAdminSettingsIndexRoute
   '/admin/users': typeof AdminAdminUsersIndexRoute
 }
@@ -84,6 +92,7 @@ export interface FileRoutesById {
   '/_admin/admin/': typeof AdminAdminIndexRoute
   '/_admin/admin/users/$userId': typeof AdminAdminUsersUserIdRoute
   '/_admin/admin/users/new': typeof AdminAdminUsersNewRoute
+  '/_admin/admin/roles/': typeof AdminAdminRolesIndexRoute
   '/_admin/admin/settings/': typeof AdminAdminSettingsIndexRoute
   '/_admin/admin/users/': typeof AdminAdminUsersIndexRoute
 }
@@ -95,6 +104,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/admin/users/$userId'
     | '/admin/users/new'
+    | '/admin/roles/'
     | '/admin/settings/'
     | '/admin/users/'
   fileRoutesByTo: FileRoutesByTo
@@ -104,6 +114,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/admin/users/$userId'
     | '/admin/users/new'
+    | '/admin/roles'
     | '/admin/settings'
     | '/admin/users'
   id:
@@ -114,6 +125,7 @@ export interface FileRouteTypes {
     | '/_admin/admin/'
     | '/_admin/admin/users/$userId'
     | '/_admin/admin/users/new'
+    | '/_admin/admin/roles/'
     | '/_admin/admin/settings/'
     | '/_admin/admin/users/'
   fileRoutesById: FileRoutesById
@@ -168,6 +180,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAdminSettingsIndexRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/_admin/admin/roles/': {
+      id: '/_admin/admin/roles/'
+      path: '/admin/roles'
+      fullPath: '/admin/roles/'
+      preLoaderRoute: typeof AdminAdminRolesIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/_admin/admin/users/new': {
       id: '/_admin/admin/users/new'
       path: '/admin/users/new'
@@ -189,6 +208,7 @@ interface AdminRouteChildren {
   AdminAdminIndexRoute: typeof AdminAdminIndexRoute
   AdminAdminUsersUserIdRoute: typeof AdminAdminUsersUserIdRoute
   AdminAdminUsersNewRoute: typeof AdminAdminUsersNewRoute
+  AdminAdminRolesIndexRoute: typeof AdminAdminRolesIndexRoute
   AdminAdminSettingsIndexRoute: typeof AdminAdminSettingsIndexRoute
   AdminAdminUsersIndexRoute: typeof AdminAdminUsersIndexRoute
 }
@@ -197,6 +217,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminAdminIndexRoute: AdminAdminIndexRoute,
   AdminAdminUsersUserIdRoute: AdminAdminUsersUserIdRoute,
   AdminAdminUsersNewRoute: AdminAdminUsersNewRoute,
+  AdminAdminRolesIndexRoute: AdminAdminRolesIndexRoute,
   AdminAdminSettingsIndexRoute: AdminAdminSettingsIndexRoute,
   AdminAdminUsersIndexRoute: AdminAdminUsersIndexRoute,
 }
