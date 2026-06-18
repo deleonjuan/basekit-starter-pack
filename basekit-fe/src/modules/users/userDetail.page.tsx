@@ -3,6 +3,7 @@ import { AppPage } from "#/lib/universal-layout/";
 import { FormGenerator, useAppForm, field } from "#/lib/form-generator";
 import type { FormSchemaField } from "#/lib/form-generator";
 import { Button } from "#/components/ui/button";
+import { AppDialog } from "#/components/common";
 import { useGetUser } from "./queries/getUser.query";
 import type { GetUserData } from "./queries/getUser.query";
 import { useUpdateUser } from "./queries/updateUser.mutation";
@@ -97,56 +98,69 @@ function UserDetailForm({
 }
 
 function DangerZone({ userId, user }: { userId: string; user: User | null }) {
+  const [open, setOpen] = useState(false);
   const [updateUser, { loading }] = useUpdateUser();
   const isActive = user?.isActive;
 
-  const labelOptions = {
-    active: {
-      title: "Desactivar usuario",
-      description:
-        "Una vez desactivado, este usuario no podra iniciar sesion o ejecutar ninguna operacion",
-      deactivateButton: "Desactivar este usuario",
-    },
-    inactive: {
-      title: "Activar usuario",
-      description:
-        "Una vez activado, este usuario podra iniciar sesion y ejecutar operaciones",
-      deactivateButton: "activar este usuario",
-    },
+  const labels = isActive
+    ? {
+        sectionTitle: "Desactivar usuario",
+        description:
+          "Una vez desactivado, este usuario no podrá iniciar sesión o ejecutar ninguna operación.",
+        triggerLabel: "Desactivar este usuario",
+        dialogTitle: "¿Desactivar usuario?",
+        submitLabel: loading ? "Desactivando..." : "Desactivar",
+      }
+    : {
+        sectionTitle: "Activar usuario",
+        description:
+          "Una vez activado, este usuario podrá iniciar sesión y ejecutar operaciones.",
+        triggerLabel: "Activar este usuario",
+        dialogTitle: "¿Activar usuario?",
+        submitLabel: loading ? "Activando..." : "Activar",
+      };
+
+  const handleConfirm = () => {
+    updateUser({
+      variables: { id: userId, input: { isActive: !isActive } },
+      onCompleted: () => setOpen(false),
+    });
   };
-  const labels = labelOptions[isActive ? "active" : "inactive"];
-
-  const formSchema: FormSchemaField[] = [
-    {
-      title: labels.title,
-      description: labels.description,
-      fields: [
-        field.customField({
-          name: "deactivate",
-          fieldComponent: () => (
-            <Button
-              variant={isActive ? "destructive" : "default"}
-              disabled={loading}
-              onClick={() =>
-                updateUser({
-                  variables: { id: userId, input: { isActive: !isActive } },
-                })
-              }
-            >
-              {loading ? "Desactivando..." : labels.deactivateButton}
-            </Button>
-          ),
-        }),
-      ],
-    },
-  ];
-
-  const form = useAppForm({});
 
   return (
     <section className="flex flex-col gap-4">
       <h2 className="text-lg font-semibold">Zona de peligro</h2>
-      <FormGenerator formSchema={formSchema} form={form} />
+      <div className="flex flex-col gap-1">
+        <p className="text-sm font-medium">{labels.sectionTitle}</p>
+        <p className="text-sm text-muted-foreground">{labels.description}</p>
+        <div className="mt-3">
+          <AppDialog
+            open={open}
+            onOpenChange={setOpen}
+            trigger={
+              <Button
+                variant={isActive ? "destructive" : "default"}
+                disabled={loading}
+              />
+            }
+            triggerLabel={labels.triggerLabel}
+            title={labels.dialogTitle}
+            onSubmit={handleConfirm}
+            onSubmitLabel={labels.submitLabel}
+            disable={loading}
+            showCloseButton={false}
+            properties={
+              isActive
+                ? { submitButton: { variant: "destructive" } }
+                : undefined
+            }
+          >
+            <p className="text-sm text-muted-foreground">
+              {labels.description}
+            </p>
+          </AppDialog>
+        </div>
+      </div>
     </section>
   );
 }

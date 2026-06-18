@@ -1,16 +1,8 @@
 import { useState } from "react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { SimpleDataTable } from "#/components/common/DataTable";
-import { CustomDate } from "#/components/common";
+import { CustomDate, AppDialog } from "#/components/common";
 import { Button } from "#/components/ui/button";
-import {
-  Dialog,
-  DialogPopup,
-  DialogHeader,
-  DialogTitle,
-  DialogPanel,
-  DialogFooter,
-} from "#/components/ui/dialog";
 import { Trash2Icon } from "lucide-react";
 import type { UserRole } from "../queries/getUser.query";
 import { AssignRoleDialog } from "./AssignRoleDialog";
@@ -33,48 +25,30 @@ function RevokeRoleButton({ userId, role }: RevokeRoleButtonProps) {
   };
 
   return (
-    <>
-      <Button
-        variant="ghost"
-        size="icon"
-        className="text-muted-foreground hover:text-destructive"
-        onClick={() => setOpen(true)}
-      >
-        <Trash2Icon size={16} />
-      </Button>
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogPopup showCloseButton={false}>
-          <DialogHeader>
-            <DialogTitle>Desasignar rol</DialogTitle>
-          </DialogHeader>
-          <DialogPanel>
-            <p className="text-sm text-muted-foreground">
-              ¿Estás seguro que deseas desasignar el rol{" "}
-              <span className="font-medium text-foreground">{role.name}</span>{" "}
-              de este usuario?
-            </p>
-          </DialogPanel>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setOpen(false)}
-              type="button"
-              disabled={loading}
-            >
-              Cancelar
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={handleConfirm}
-              type="button"
-              disabled={loading}
-            >
-              {loading ? "Desasignando..." : "Desasignar"}
-            </Button>
-          </DialogFooter>
-        </DialogPopup>
-      </Dialog>
-    </>
+    <AppDialog
+      open={open}
+      onOpenChange={setOpen}
+      trigger={
+        <Button
+          variant="ghost"
+          size="icon"
+          className="text-muted-foreground hover:text-destructive"
+        />
+      }
+      triggerLabel={<Trash2Icon size={16} />}
+      title="Desasignar rol"
+      onSubmit={handleConfirm}
+      onSubmitLabel={loading ? "Desasignando..." : "Desasignar"}
+      disable={loading}
+      showCloseButton={false}
+      properties={{ submitButton: { variant: "destructive" } }}
+    >
+      <p className="text-sm text-muted-foreground">
+        ¿Estás seguro que deseas desasignar el rol{" "}
+        <span className="font-medium text-foreground">{role.name}</span> de este
+        usuario?
+      </p>
+    </AppDialog>
   );
 }
 
