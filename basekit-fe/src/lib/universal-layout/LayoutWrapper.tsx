@@ -5,12 +5,17 @@ import { Sidebar, type SidebarItem } from "./Sidebar";
 interface LayoutWrapperProps {
   children: ReactNode;
   sidebarItems: SidebarItem[];
+  footerItems?: SidebarItem[];
 }
 
-export function LayoutWrapper({ children, sidebarItems }: LayoutWrapperProps) {
+export function LayoutWrapper({
+  children,
+  sidebarItems,
+  footerItems,
+}: LayoutWrapperProps) {
   return (
     <SidebarProvider>
-      <Sidebar items={sidebarItems} />
+      <Sidebar items={sidebarItems} footerItems={footerItems} />
       <SidebarInset>{children}</SidebarInset>
     </SidebarProvider>
   );

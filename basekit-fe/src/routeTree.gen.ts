@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as LogoutRouteImport } from './routes/logout'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AdminRouteImport } from './routes/_admin'
 import { Route as IndexRouteImport } from './routes/index'
@@ -20,6 +21,11 @@ import { Route as AdminAdminUsersNewRouteImport } from './routes/_admin/admin/us
 import { Route as AdminAdminUsersUserIdRouteImport } from './routes/_admin/admin/users/$userId'
 import { Route as AdminAdminRolesRoleIdRouteImport } from './routes/_admin/admin/roles/$roleId'
 
+const LogoutRoute = LogoutRouteImport.update({
+  id: '/logout',
+  path: '/logout',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -73,6 +79,7 @@ const AdminAdminRolesRoleIdRoute = AdminAdminRolesRoleIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/logout': typeof LogoutRoute
   '/admin/': typeof AdminAdminIndexRoute
   '/admin/roles/$roleId': typeof AdminAdminRolesRoleIdRoute
   '/admin/users/$userId': typeof AdminAdminUsersUserIdRoute
@@ -84,6 +91,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/logout': typeof LogoutRoute
   '/admin': typeof AdminAdminIndexRoute
   '/admin/roles/$roleId': typeof AdminAdminRolesRoleIdRoute
   '/admin/users/$userId': typeof AdminAdminUsersUserIdRoute
@@ -97,6 +105,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_admin': typeof AdminRouteWithChildren
   '/login': typeof LoginRoute
+  '/logout': typeof LogoutRoute
   '/_admin/admin/': typeof AdminAdminIndexRoute
   '/_admin/admin/roles/$roleId': typeof AdminAdminRolesRoleIdRoute
   '/_admin/admin/users/$userId': typeof AdminAdminUsersUserIdRoute
@@ -110,6 +119,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/login'
+    | '/logout'
     | '/admin/'
     | '/admin/roles/$roleId'
     | '/admin/users/$userId'
@@ -121,6 +131,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/login'
+    | '/logout'
     | '/admin'
     | '/admin/roles/$roleId'
     | '/admin/users/$userId'
@@ -133,6 +144,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_admin'
     | '/login'
+    | '/logout'
     | '/_admin/admin/'
     | '/_admin/admin/roles/$roleId'
     | '/_admin/admin/users/$userId'
@@ -146,10 +158,18 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRouteWithChildren
   LoginRoute: typeof LoginRoute
+  LogoutRoute: typeof LogoutRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/logout': {
+      id: '/logout'
+      path: '/logout'
+      fullPath: '/logout'
+      preLoaderRoute: typeof LogoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -249,6 +269,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRouteWithChildren,
   LoginRoute: LoginRoute,
+  LogoutRoute: LogoutRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
