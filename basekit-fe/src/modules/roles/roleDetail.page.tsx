@@ -7,6 +7,7 @@ import { PencilIcon } from "lucide-react";
 import { useGetRole } from "./queries/getRole.query";
 import { useUpdateRole } from "./queries/updateRole.mutation";
 import { PermissionsTable } from "./components/PermissionsTable";
+import { CustomDate } from "#/components/common";
 
 const getFormSchema = (isEditing: boolean): FormSchemaField[] => [
   {
@@ -137,7 +138,11 @@ function RoleDetailContainer({
   return (
     <AppPage
       title={role.name}
-      subtitle={`Creado: ${new Date(role.createdAt).toLocaleDateString()}`}
+      subtitle={
+        <>
+          Creado: <CustomDate value={role.createdAt} />
+        </>
+      }
       goBackLink={{ to: "/admin/roles", label: "Roles" }}
     >
       <div className="mt-8 flex flex-col gap-10">

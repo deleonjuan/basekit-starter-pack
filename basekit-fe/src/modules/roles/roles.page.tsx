@@ -1,6 +1,7 @@
 import { useNavigate } from "@tanstack/react-router";
 import { AppPage } from "#/lib/universal-layout/";
 import DataTable, { type IPagination } from "#/components/common/DataTable";
+import { CustomDate } from "#/components/common";
 import type { ColumnDef } from "@tanstack/react-table";
 import { useGetRoles } from "./queries/roles.query";
 import type { Role } from "./queries/roles.query";
@@ -14,7 +15,7 @@ const columns: ColumnDef<Role>[] = [
   {
     accessorKey: "createdAt",
     header: "Creado",
-    cell: ({ getValue }) => new Date(getValue<string>()).toLocaleDateString(),
+    cell: ({ getValue }) => <CustomDate value={getValue<string>()} />,
   },
 ];
 

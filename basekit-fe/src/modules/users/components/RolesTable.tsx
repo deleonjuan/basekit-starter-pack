@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { SimpleDataTable } from "#/components/common/DataTable";
+import { CustomDate } from "#/components/common";
 import { Button } from "#/components/ui/button";
 import {
   Dialog,
@@ -91,7 +92,7 @@ function getColumns(userId: string): ColumnDef<UserRole>[] {
     {
       accessorKey: "createdAt",
       header: "Asignado",
-      cell: ({ getValue }) => new Date(getValue<string>()).toLocaleDateString(),
+      cell: ({ getValue }) => <CustomDate value={getValue<string>()} />,
     },
     {
       id: "actions",
