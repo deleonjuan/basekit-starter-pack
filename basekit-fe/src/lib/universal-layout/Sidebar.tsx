@@ -6,11 +6,14 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
+  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
 } from "#/components/ui/sidebar.tsx";
+import { Image } from "#/components/common";
+import banner from "#/assets/banner.png";
 
 type SidebarLinkItem = {
   label: string;
@@ -65,6 +68,9 @@ export function Sidebar({ items, footerItems = [] }: SidebarProps) {
 
   return (
     <ShadcnSidebar collapsible="icon">
+      <SidebarHeader className="bg-background p-3">
+        <Image src={banner} alt="BaseKit" />
+      </SidebarHeader>
       <SidebarContent className="bg-background">
         <SidebarGroup>
           <SidebarGroupContent>
