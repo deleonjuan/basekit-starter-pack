@@ -1,3 +1,4 @@
+import { useNavigate } from "@tanstack/react-router";
 import { AppPage } from "#/lib/universal-layout/";
 import DataTable, { type IPagination } from "#/components/common/DataTable";
 import type { ColumnDef } from "@tanstack/react-table";
@@ -22,6 +23,15 @@ export function RolesPage() {
     data: { roles, ...pagination },
     loading,
   } = useGetRoles();
+  const navigate = useNavigate();
+
+  const onRoleClick = (role: Role) => {
+    navigate({
+      to: "/admin/roles/$roleId",
+      params: { roleId: role.id },
+      search: { page: 1 },
+    });
+  };
 
   return (
     <AppPage title="Roles" headerRightComponent={<CreateRoleDialog />}>
@@ -30,6 +40,7 @@ export function RolesPage() {
         data={roles ?? []}
         isLoading={loading}
         pagination={pagination as IPagination}
+        onRowClick={onRoleClick}
       />
     </AppPage>
   );

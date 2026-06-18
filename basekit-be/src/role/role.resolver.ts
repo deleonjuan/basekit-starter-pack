@@ -3,6 +3,7 @@ import { Role } from "./entities/role.entity";
 import { Permission } from "./entities/permission.entity";
 import { RoleService } from "./role.service";
 import { CreateRoleInput } from "./dto/create-role.input";
+import { UpdateRoleInput } from "./dto/update-role.input";
 import { PaginationInput } from "../common/dto/pagination.input";
 import { PaginatedRoles } from "./types/paginated-roles.type";
 import { PaginatedPermissions } from "./types/paginated-permissions.type";
@@ -21,10 +22,25 @@ export class RoleResolver {
     return this.roleService.findAll(pagination);
   }
 
+  @Query(() => Role, { name: "role" })
+  @RequirePermissions("read:role")
+  findOne(@Args("id", { type: () => ID }) id: string): Promise<Role> {
+    return this.roleService.findOne(id);
+  }
+
   @Mutation(() => Role, { name: "createRole" })
   @RequirePermissions("create:role")
   create(@Args("input") input: CreateRoleInput): Promise<Role> {
     return this.roleService.create(input);
+  }
+
+  @Mutation(() => Role, { name: "updateRole" })
+  @RequirePermissions("update:role")
+  update(
+    @Args("id", { type: () => ID }) id: string,
+    @Args("input") input: UpdateRoleInput,
+  ): Promise<Role> {
+    return this.roleService.update(id, input);
   }
 
   @Mutation(() => Boolean, { name: "deleteRole" })
@@ -49,6 +65,16 @@ export class RoleResolver {
     @Args("permissionId", { type: () => ID }) permissionId: string,
   ): Promise<Role> {
     return this.roleService.revokePermission(roleId, permissionId);
+  }
+
+  @Mutation(() => Role, { name: "syncPermissions" })
+  @RequirePermissions("update:role")
+  syncPermissions(
+    @Args("roleId", { type: () => ID }) roleId: string,
+    @Args("assign", { type: () => [ID] }) assign: string[],
+    @Args("revoke", { type: () => [ID] }) revoke: string[],
+  ): Promise<Role> {
+    return this.roleService.syncPermissions(roleId, assign, revoke);
   }
 
   @Query(() => PaginatedPermissions, { name: "permissions" })

@@ -57,7 +57,7 @@ function UserDetailForm({
       }}
       className="flex flex-col gap-6"
     >
-      <section className="flex flex-col gap-4 border-b pb-4">
+      <section className="flex flex-col gap-4 pb-6">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold">Usuario</h2>
           {!isEditing ? (
@@ -82,7 +82,9 @@ function UserDetailForm({
           )}
         </div>
 
-        <FormGenerator form={form} formSchema={getFormSchema(isEditing)} />
+        <div className="xl:w-1/2 w-full">
+          <FormGenerator form={form} formSchema={getFormSchema(isEditing)} />
+        </div>
 
         {error && (
           <p className="text-sm text-red-500">

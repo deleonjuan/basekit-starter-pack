@@ -1,9 +1,10 @@
 import { Inject, Injectable, NotFoundException, Scope } from "@nestjs/common";
-import { DataSource } from "typeorm";
+import { DataSource, In } from "typeorm";
 import { TENANT_DATASOURCE } from "../tenant/tenant.provider";
 import { Role } from "./entities/role.entity";
 import { Permission } from "./entities/permission.entity";
 import { CreateRoleInput } from "./dto/create-role.input";
+import { UpdateRoleInput } from "./dto/update-role.input";
 import { PaginationInput } from "../common/dto/pagination.input";
 import { IPaginatedResult } from "../common/types/paginated-result.type";
 import { findMany } from "../common/utils/find-many.util";
@@ -32,6 +33,12 @@ export class RoleService {
 
   async create(input: CreateRoleInput): Promise<Role> {
     const role = this.roleRepo.create(input);
+    return this.roleRepo.save(role);
+  }
+
+  async update(id: string, input: UpdateRoleInput): Promise<Role> {
+    const role = await this.findOne(id);
+    Object.assign(role, input);
     return this.roleRepo.save(role);
   }
 
@@ -66,6 +73,30 @@ export class RoleService {
     role.permissions = (role.permissions ?? []).filter(
       (p) => p.id !== permissionId,
     );
+    return this.roleRepo.save(role);
+  }
+
+  async syncPermissions(
+    roleId: string,
+    assign: string[],
+    revoke: string[],
+  ): Promise<Role> {
+    const role = await this.roleRepo.findOne({
+      where: { id: roleId },
+      relations: { permissions: true },
+    });
+    if (!role) throw new NotFoundException(`Role ${roleId} not found`);
+
+    const revokeSet = new Set(revoke);
+    role.permissions = (role.permissions ?? []).filter(
+      (p) => !revokeSet.has(p.id),
+    );
+
+    if (assign.length > 0) {
+      const newPerms = await this.permRepo.findBy({ id: In(assign) });
+      role.permissions = [...role.permissions, ...newPerms];
+    }
+
     return this.roleRepo.save(role);
   }
 

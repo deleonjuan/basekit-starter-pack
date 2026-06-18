@@ -89,6 +89,7 @@ type Query {
   user(id: ID!): User
   me: User!
   roles(pagination: PaginationInput): PaginatedRoles!
+  role(id: ID!): Role!
   permissions(pagination: PaginationInput): PaginatedPermissions!
 }
 
@@ -108,9 +109,11 @@ type Mutation {
   assignRole(userId: ID!, roleId: ID!): User!
   revokeRole(userId: ID!, roleId: ID!): User!
   createRole(input: CreateRoleInput!): Role!
+  updateRole(id: ID!, input: UpdateRoleInput!): Role!
   deleteRole(id: ID!): Boolean!
   assignPermission(roleId: ID!, permissionId: ID!): Role!
   revokePermission(roleId: ID!, permissionId: ID!): Role!
+  syncPermissions(roleId: ID!, assign: [ID!]!, revoke: [ID!]!): Role!
   createPermission(value: String!, description: String): Permission!
 }
 
@@ -132,5 +135,10 @@ input UpdateUserInput {
 
 input CreateRoleInput {
   name: String!
+  description: String
+}
+
+input UpdateRoleInput {
+  name: String
   description: String
 }

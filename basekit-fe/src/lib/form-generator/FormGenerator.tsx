@@ -165,7 +165,7 @@ export const FormGenerator = ({
   formVariant = "full",
 }: FormGeneratorProps) => {
   return (
-    <FieldSet className="h-full" key="field-set">
+    <FieldSet className="h-full gap-0" key="field-set">
       {formSchema.map((section, key: number) => (
         <FormSection
           key={key}
