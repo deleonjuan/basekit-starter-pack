@@ -12,7 +12,7 @@ export function getRouter() {
     cache: new InMemoryCache(),
     defaultOptions: {
       watchQuery: {
-        fetchPolicy: "no-cache",
+        fetchPolicy: "cache-first",
       },
       query: {
         fetchPolicy: "network-only",
