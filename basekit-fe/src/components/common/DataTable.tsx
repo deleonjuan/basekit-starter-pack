@@ -140,6 +140,7 @@ interface CoreTableProps {
   onRowClick?: (row: any) => void;
   noInfoBanner?: React.ReactNode;
   className?: string;
+  hideHeaders?: boolean;
 }
 
 function CoreTable({
@@ -149,13 +150,16 @@ function CoreTable({
   onRowClick,
   noInfoBanner,
   className = "",
+  hideHeaders = false,
 }: CoreTableProps) {
   const isEmpty = !table.getRowModel().rows?.length && !isLoading;
 
   return (
     <>
       <Table className={`border-b ${className}`}>
-        <DataTableHeader table={table} className="shadow-none" />
+        {!hideHeaders && (
+          <DataTableHeader table={table} className="shadow-none" />
+        )}
         <DataTableBody
           table={table}
           isLoading={isLoading}
@@ -189,6 +193,7 @@ type CustomDataTableProps = {
   onRowClick?: (row: any) => void;
   noInfoBanner?: React.ReactNode;
   className?: string;
+  hideHeaders?: boolean;
 };
 
 /** Full-featured table: scrollable, column visibility, optional header slot and pagination. */
@@ -201,6 +206,7 @@ export default function DataTable({
   header,
   noInfoBanner,
   onRowClick,
+  hideHeaders = false,
 }: CustomDataTableProps) {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
 
@@ -225,6 +231,7 @@ export default function DataTable({
             onRowClick={onRowClick}
             noInfoBanner={noInfoBanner ?? <NoInfoBanner />}
             className="table-fixed"
+            hideHeaders={hideHeaders}
           />
         </ScrollArea>
       </div>
@@ -246,6 +253,7 @@ export function SimpleDataTable({
   onRowClick,
   noInfoBanner,
   className = "",
+  hideHeaders = false,
 }: CustomDataTableProps) {
   const table = useReactTable({
     data,
@@ -260,8 +268,9 @@ export function SimpleDataTable({
       columns={columns}
       isLoading={isLoading}
       onRowClick={onRowClick}
-      noInfoBanner={noInfoBanner}
+      noInfoBanner={noInfoBanner ?? <NoInfoBanner />}
       className={className}
+      hideHeaders={hideHeaders}
     />
   );
 }

@@ -3,8 +3,17 @@ import type { TypedDocumentNode } from "@apollo/client";
 import { useQuery } from "@apollo/client/react";
 import type { User } from "./users.query";
 
+export interface UserRole {
+  id: string;
+  name: string;
+  description: string | null;
+  createdAt: string;
+}
+
 export interface GetUserData {
-  user: User;
+  user: User & {
+    roles: UserRole[];
+  };
 }
 
 export const GET_USER_QUERY: TypedDocumentNode<GetUserData, { id: string }> =
@@ -14,6 +23,12 @@ export const GET_USER_QUERY: TypedDocumentNode<GetUserData, { id: string }> =
         id
         username
         isActive
+        roles {
+          id
+          name
+          description
+          createdAt
+        }
         createdAt
       }
     }

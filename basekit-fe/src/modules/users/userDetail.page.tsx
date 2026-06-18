@@ -4,9 +4,11 @@ import { FormGenerator, useAppForm, field } from "#/lib/form-generator";
 import type { FormSchemaField } from "#/lib/form-generator";
 import { Button } from "#/components/ui/button";
 import { useGetUser } from "./queries/getUser.query";
+import type { GetUserData } from "./queries/getUser.query";
 import { useUpdateUser } from "./queries/updateUser.mutation";
 import { PencilIcon } from "lucide-react";
 import type { User } from "./queries/users.query";
+import RolesTable from "./components/RolesTable";
 
 const getFormSchema = (isEditing: boolean): FormSchemaField[] => [
   {
@@ -152,7 +154,7 @@ function UserDetailContainer({
   user,
 }: {
   userId: string;
-  user: User | null;
+  user: GetUserData["user"] | null;
 }) {
   return (
     <AppPage
@@ -161,6 +163,7 @@ function UserDetailContainer({
     >
       <div className="mt-8 flex flex-col gap-10">
         <UserDetailForm userId={userId} username={user?.username ?? ""} />
+        <RolesTable userId={userId} roles={user?.roles ?? []} />
         <DangerZone userId={userId} user={user} />
       </div>
     </AppPage>
