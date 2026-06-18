@@ -19,11 +19,11 @@ const columns: ColumnDef<Role>[] = [
   },
 ];
 
-export function RolesPage() {
+export function RolesPage({ page }: { page: number }) {
   const {
     data: { roles, ...pagination },
     loading,
-  } = useGetRoles();
+  } = useGetRoles(page);
   const navigate = useNavigate();
 
   const onRoleClick = (role: Role) => {

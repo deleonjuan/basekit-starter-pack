@@ -33,11 +33,11 @@ const columns: ColumnDef<User>[] = [
   },
 ];
 
-export function UsersPage() {
+export function UsersPage({ page }: { page: number }) {
   const {
     data: { users, ...pagination },
     loading,
-  } = useGetUsers();
+  } = useGetUsers(page);
   const navigate = useNavigate();
 
   const onUserClick = (e: User) => {

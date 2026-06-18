@@ -20,10 +20,10 @@ export interface GetRolesData {
 
 export const GET_ROLES_QUERY: TypedDocumentNode<
   GetRolesData,
-  Record<string, never>
+  { page: number; limit: number }
 > = gql`
-  query GetRoles {
-    roles(pagination: { page: 1, limit: 20 }) {
+  query GetRoles($page: Int!, $limit: Int!) {
+    roles(pagination: { page: $page, limit: $limit }) {
       data {
         id
         name
@@ -37,8 +37,10 @@ export const GET_ROLES_QUERY: TypedDocumentNode<
   }
 `;
 
-export function useGetRoles() {
-  const { data, ...res } = useQuery(GET_ROLES_QUERY);
+export function useGetRoles(page = 1, limit = 20) {
+  const { data, ...res } = useQuery(GET_ROLES_QUERY, {
+    variables: { page, limit },
+  });
 
   return {
     ...res,

@@ -21,10 +21,10 @@ export interface GetUsersData {
 
 export const GET_USERS_QUERY: TypedDocumentNode<
   GetUsersData,
-  Record<string, never>
+  { page: number; limit: number }
 > = gql`
-  query GetUsers {
-    users(pagination: { page: 1, limit: 20 }) {
+  query GetUsers($page: Int!, $limit: Int!) {
+    users(pagination: { page: $page, limit: $limit }) {
       data {
         id
         username
@@ -39,8 +39,10 @@ export const GET_USERS_QUERY: TypedDocumentNode<
   }
 `;
 
-export function useGetUsers() {
-  const { data, ...res } = useQuery(GET_USERS_QUERY);
+export function useGetUsers(page = 1, limit = 20) {
+  const { data, ...res } = useQuery(GET_USERS_QUERY, {
+    variables: { page, limit },
+  });
 
   return {
     ...res,
