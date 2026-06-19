@@ -1,354 +1,110 @@
-Welcome to your new TanStack Start app! 
+# basekit-fe
 
-# Getting Started
+TanStack Start (React SSR) frontend for BaseKit Starter Pack. Admin UI with authentication, users, roles, settings, theming, and i18n.
 
-To run this application:
+---
 
-```bash
-npm install
-npm run dev
-```
+## Tech Stack
 
-# Building For Production
+- **TanStack Start** — React SSR framework
+- **TanStack Router** — file-based routing with type-safe search params
+- **Apollo Client** — GraphQL data fetching
+- **Tailwind CSS** — utility-first styling
+- **Zustand** — global state (settings, theme, language)
+- **i18next / react-i18next** — internationalisation
+- **Radix UI / Base UI** — headless component primitives
 
-To build this application for production:
+---
 
-```bash
-npm run build
-```
+## Prerequisites
 
-## Testing
+- Node.js 20+
+- pnpm
+- `basekit-be` running locally on port 3001
 
-This project uses [Vitest](https://vitest.dev/) for testing. You can run the tests with:
+---
 
-```bash
-npm run test
-```
+## Local Setup
 
-## Styling
-
-This project uses [Tailwind CSS](https://tailwindcss.com/) for styling.
-
-### Removing Tailwind CSS
-
-If you prefer not to use Tailwind CSS:
-
-1. Remove the demo pages in `src/routes/demo/`
-2. Replace the Tailwind import in `src/styles.css` with your own styles
-3. Remove `tailwindcss()` from the plugins array in `vite.config.ts`
-4. Uninstall the packages: `npm install @tailwindcss/vite tailwindcss -D`
-
-
-## Shadcn
-
-Add components using the latest version of [Shadcn](https://ui.shadcn.com/).
+### 1. Install dependencies
 
 ```bash
-pnpm dlx shadcn@latest add button
+pnpm install
 ```
 
+### 2. Configure environment
 
-# Apollo Client Integration
+The repository includes a `.env` with defaults that work against a local backend:
 
-This add-on integrates Apollo Client with TanStack Start to provide modern streaming SSR support for GraphQL data fetching.
-
-## Dependencies
-
-The following packages are automatically installed:
-
-- `@apollo/client` - Apollo Client core
-- `@apollo/client-integration-tanstack-start` - TanStack Start integration
-- `graphql` - GraphQL implementation
-
-## Configuration
-
-### 1. GraphQL Endpoint
-
-Configure your GraphQL API endpoint in `src/router.tsx`:
-
-```tsx
-// Configure Apollo Client
-const apolloClient = new ApolloClient({
-  cache: new InMemoryCache(),
-  link: new HttpLink({
-    uri: 'https://your-graphql-api.example.com/graphql', // Update this!
-  }),
-})
+```env
+VITE_API_BASE_URL=http://localhost:3001
+VITE_TENANT_SLUG=default
 ```
 
-You can use environment variables by creating a `.env.local` file:
+### 3. Start the development server
 
 ```bash
-VITE_GRAPHQL_ENDPOINT=https://your-api.com/graphql
+pnpm dev
 ```
 
-The default configuration already uses this pattern:
+The app is available at [http://localhost:3000](http://localhost:3000).
 
-```tsx
-uri: import.meta.env.VITE_GRAPHQL_ENDPOINT ||
-  'https://your-graphql-api.example.com/graphql'
+---
+
+## Scripts
+
+| Command | Description |
+|---|---|
+| `pnpm dev` | Start development server (port 3000) |
+| `pnpm build` | Build for production |
+| `pnpm preview` | Preview production build |
+| `pnpm generate-routes` | Regenerate TanStack Router route tree |
+| `pnpm test` | Run unit tests (Vitest) |
+| `pnpm lint` | Lint and auto-fix |
+| `pnpm format` | Format with Prettier |
+
+---
+
+## Project Structure
+
+```
+src/
+├── routes/             # File-based routes (TanStack Router)
+│   ├── __root.tsx      # Root layout, theme provider, i18n init
+│   ├── _admin.tsx      # Authenticated layout with sidebar
+│   └── _admin/admin/   # Protected admin pages
+├── modules/            # Feature modules
+│   ├── auth/           # Login, logout, AuthGuard, refresh token logic
+│   ├── dashboard/      # Dashboard page
+│   ├── users/          # Users list, detail, create
+│   ├── roles/          # Roles list, detail, permissions table
+│   └── settings/       # Theme & language settings
+├── components/
+│   ├── common/         # Shared components (DataTable, AppDialog, Image, …)
+│   └── screens/        # Full-page screens (NotFoundScreen, ErrorScreen)
+├── lib/
+│   ├── universal-layout/ # AppPage, Sidebar, LayoutWrapper, ThemeProvider
+│   ├── form-generator/   # Declarative form builder
+│   └── i18n/             # i18next setup, glob-based translation loader
+└── store/
+    └── settings.store.ts # Zustand store (theme, language, applySettings)
 ```
 
-## Usage Patterns
+---
 
-### Pattern 1: Loader with preloadQuery (Recommended for SSR)
+## Adding Translations
 
-Use `preloadQuery` in route loaders for optimal streaming SSR performance:
+Drop a `language.json` file anywhere inside `src/modules/<name>/`, `src/components/`, or `src/lib/`. It is auto-discovered at build time — no registration needed.
 
-```tsx
-import { gql, TypedDocumentNode } from '@apollo/client'
-import { useReadQuery } from '@apollo/client/react'
-import { createFileRoute } from '@tanstack/react-router'
-
-const MY_QUERY: TypedDocumentNode<{
-  posts: { id: string; title: string; content: string }[]
-}> = gql`
-  query GetData {
-    posts {
-      id
-      title
-      content
-    }
-  }
-`
-
-export const Route = createFileRoute('/my-route')({
-  component: RouteComponent,
-  loader: ({ context: { preloadQuery } }) => {
-    const queryRef = preloadQuery(MY_QUERY, {
-      variables: {},
-    })
-    return { queryRef }
-  },
-})
-
-function RouteComponent() {
-  const { queryRef } = Route.useLoaderData()
-  const { data } = useReadQuery(queryRef)
-
-  return <div>{/* render your data */}</div>
+```json
+{
+  "es": { "myModule": { "title": "Mi módulo" } },
+  "en": { "myModule": { "title": "My module" } }
 }
 ```
 
-### Pattern 2: useSuspenseQuery
+---
 
-Use `useSuspenseQuery` directly in components with automatic suspense support:
+## Theme
 
-```tsx
-import { gql, TypedDocumentNode } from '@apollo/client'
-import { useSuspenseQuery } from '@apollo/client/react'
-import { createFileRoute } from '@tanstack/react-router'
-
-const MY_QUERY: TypedDocumentNode<{
-  posts: { id: string; title: string }[]
-}> = gql`
-  query GetData {
-    posts {
-      id
-      title
-    }
-  }
-`
-
-export const Route = createFileRoute('/my-route')({
-  component: RouteComponent,
-})
-
-function RouteComponent() {
-  const { data } = useSuspenseQuery(MY_QUERY)
-
-  return <div>{/* render your data */}</div>
-}
-```
-
-### Pattern 3: Manual Refetching
-
-```tsx
-import { useQueryRefHandlers, useReadQuery } from '@apollo/client/react'
-
-function MyComponent() {
-  const { queryRef } = Route.useLoaderData()
-  const { refetch } = useQueryRefHandlers(queryRef)
-  const { data } = useReadQuery(queryRef)
-
-  return (
-    <div>
-      <button onClick={() => refetch()}>Refresh</button>
-      {/* render data */}
-    </div>
-  )
-}
-```
-
-## Important Notes
-
-### SSR Optimization
-
-The integration automatically handles:
-
-- Query deduplication across server and client
-- Streaming SSR with `@defer` directive support
-- Proper cache hydration
-
-## Learn More
-
-- [Apollo Client Documentation](https://www.apollographql.com/docs/react)
-- [@apollo/client-integration-tanstack-start](https://www.npmjs.com/package/@apollo/client-integration-tanstack-start)
-
-## Demo
-
-Visit `/demo/apollo-client` in your application to see a working example of Apollo Client integration.
-
-
-
-## Routing
-
-This project uses [TanStack Router](https://tanstack.com/router) with file-based routing. Routes are managed as files in `src/routes`.
-
-### Adding A Route
-
-To add a new route to your application just add a new file in the `./src/routes` directory.
-
-TanStack will automatically generate the content of the route file for you.
-
-Now that you have two routes you can use a `Link` component to navigate between them.
-
-### Adding Links
-
-To use SPA (Single Page Application) navigation you will need to import the `Link` component from `@tanstack/react-router`.
-
-```tsx
-import { Link } from "@tanstack/react-router";
-```
-
-Then anywhere in your JSX you can use it like so:
-
-```tsx
-<Link to="/about">About</Link>
-```
-
-This will create a link that will navigate to the `/about` route.
-
-More information on the `Link` component can be found in the [Link documentation](https://tanstack.com/router/v1/docs/framework/react/api/router/linkComponent).
-
-### Using A Layout
-
-In the File Based Routing setup the layout is located in `src/routes/__root.tsx`. Anything you add to the root route will appear in all the routes. The route content will appear in the JSX where you render `{children}` in the `shellComponent`.
-
-Here is an example layout that includes a header:
-
-```tsx
-import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
-
-export const Route = createRootRoute({
-  head: () => ({
-    meta: [
-      { charSet: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { title: 'My App' },
-    ],
-  }),
-  shellComponent: ({ children }) => (
-    <html lang="en">
-      <head>
-        <HeadContent />
-      </head>
-      <body>
-        <header>
-          <nav>
-            <Link to="/">Home</Link>
-            <Link to="/about">About</Link>
-          </nav>
-        </header>
-        {children}
-        <Scripts />
-      </body>
-    </html>
-  ),
-})
-```
-
-More information on layouts can be found in the [Layouts documentation](https://tanstack.com/router/latest/docs/framework/react/guide/routing-concepts#layouts).
-
-## Server Functions
-
-TanStack Start provides server functions that allow you to write server-side code that seamlessly integrates with your client components.
-
-```tsx
-import { createServerFn } from '@tanstack/react-start'
-
-const getServerTime = createServerFn({
-  method: 'GET',
-}).handler(async () => {
-  return new Date().toISOString()
-})
-
-// Use in a component
-function MyComponent() {
-  const [time, setTime] = useState('')
-  
-  useEffect(() => {
-    getServerTime().then(setTime)
-  }, [])
-  
-  return <div>Server time: {time}</div>
-}
-```
-
-## API Routes
-
-You can create API routes by using the `server` property in your route definitions:
-
-```tsx
-import { createFileRoute } from '@tanstack/react-router'
-import { json } from '@tanstack/react-start'
-
-export const Route = createFileRoute('/api/hello')({
-  server: {
-    handlers: {
-      GET: () => json({ message: 'Hello, World!' }),
-    },
-  },
-})
-```
-
-## Data Fetching
-
-There are multiple ways to fetch data in your application. You can use TanStack Query to fetch data from a server. But you can also use the `loader` functionality built into TanStack Router to load the data for a route before it's rendered.
-
-For example:
-
-```tsx
-import { createFileRoute } from '@tanstack/react-router'
-
-export const Route = createFileRoute('/people')({
-  loader: async () => {
-    const response = await fetch('https://swapi.dev/api/people')
-    return response.json()
-  },
-  component: PeopleComponent,
-})
-
-function PeopleComponent() {
-  const data = Route.useLoaderData()
-  return (
-    <ul>
-      {data.results.map((person) => (
-        <li key={person.name}>{person.name}</li>
-      ))}
-    </ul>
-  )
-}
-```
-
-Loaders simplify your data fetching logic dramatically. Check out more information in the [Loader documentation](https://tanstack.com/router/latest/docs/framework/react/guide/data-loading#loader-parameters).
-
-# Demo files
-
-Files prefixed with `demo` can be safely deleted. They are there to provide a starting point for you to play around with the features you've installed.
-
-# Learn More
-
-You can learn more about all of the offerings from TanStack in the [TanStack documentation](https://tanstack.com).
-
-For TanStack Start specific documentation, visit [TanStack Start](https://tanstack.com/start).
+Theme preference (`light` / `dark` / `system`) is stored in Zustand (persisted to `localStorage`) and synced with the backend personal settings API on change. The `ThemeProvider` resolves `system` against `prefers-color-scheme` and applies the result as a class on `<html>`.

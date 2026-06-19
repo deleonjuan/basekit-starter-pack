@@ -1,98 +1,132 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# basekit-be
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+NestJS GraphQL API for BaseKit Starter Pack. Provides authentication, users, roles, permissions, settings, and multi-tenancy.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+---
 
-## Description
+## Tech Stack
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- **NestJS** — framework
+- **Apollo Server** — GraphQL via `@nestjs/graphql`
+- **TypeORM** — ORM with PostgreSQL
+- **Passport / JWT** — authentication (access token + refresh token, HTTP-only cookies)
 
-## Project setup
+---
+
+## Prerequisites
+
+- Node.js 20+
+- pnpm
+- PostgreSQL 14+
+
+---
+
+## Local Setup
+
+### 1. Install dependencies
 
 ```bash
-$ pnpm install
+pnpm install
 ```
 
-## Compile and run the project
+### 2. Configure environment
+
+Create a `.env` file at the root of `basekit-be/`:
+
+```env
+# Server
+PORT=3001
+
+# Database
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=postgres
+DB_PASS=postgres
+DB_NAME=basekit
+
+# JWT
+JWT_SECRET=change_me_access
+JWT_EXPIRES_IN=15m
+JWT_REFRESH_SECRET=change_me_refresh
+JWT_REFRESH_EXPIRES_IN=7d
+
+# Multi-tenancy (set to false to disable)
+MULTITENANCY_ENABLED=false
+```
+
+### 3. Create the database
 
 ```bash
-# development
-$ pnpm run start
-
-# watch mode
-$ pnpm run start:dev
-
-# production mode
-$ pnpm run start:prod
+createdb basekit
 ```
 
-## Run tests
+### 4. Run migrations
 
 ```bash
-# unit tests
-$ pnpm run test
-
-# e2e tests
-$ pnpm run test:e2e
-
-# test coverage
-$ pnpm run test:cov
+pnpm run migration:run
 ```
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### 5. Create initial tenant and admin user
 
 ```bash
-$ pnpm install -g @nestjs/mau
-$ mau deploy
+# Create a tenant (required when MULTITENANCY_ENABLED=true)
+pnpm run tenant:create
+
+# Create the first admin user
+pnpm run user:create
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+### 6. Start the development server
 
-## Resources
+```bash
+pnpm run start:dev
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+The API is available at [http://localhost:3001/api/graphql](http://localhost:3001/api/graphql).  
+The GraphiQL playground is served at the same URL.
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+---
 
-## Support
+## Scripts
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+| Command | Description |
+|---|---|
+| `pnpm run start:dev` | Start in watch mode (development) |
+| `pnpm run start:prod` | Start compiled build (production) |
+| `pnpm run build` | Compile to `dist/` |
+| `pnpm run migration:run` | Apply pending migrations |
+| `pnpm run migration:revert` | Revert last migration |
+| `pnpm run migration:generate` | Generate a migration from entity changes |
+| `pnpm run migration:create` | Create an empty migration file |
+| `pnpm run migration:show` | List applied/pending migrations |
+| `pnpm run tenant:create` | Interactive script to create a tenant |
+| `pnpm run user:create` | Interactive script to create a user |
+| `pnpm run test` | Run unit tests |
+| `pnpm run test:e2e` | Run end-to-end tests |
+| `pnpm run lint` | Lint and auto-fix |
 
-## Stay in touch
+---
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+## Project Structure
 
-## License
+```
+src/
+├── auth/           # JWT strategy, guards, decorators, refresh tokens
+├── user/           # User entity, resolver, service
+├── role/           # Role & Permission entities, resolver, service
+├── settings/       # Global & personal settings (registry-driven)
+├── tenant/         # Multi-tenancy middleware, datasource provider
+└── common/         # Shared DTOs, utilities, scalars
+database/
+├── datasource.ts   # TypeORM DataSource config
+└── migrations/     # All migration files
+config/
+└── config.ts       # Environment-based configuration
+```
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+---
+
+## API
+
+The GraphQL schema is auto-generated at `src/schema.gql` on startup.  
+All resolvers are protected by `JwtAuthGuard` by default. Public endpoints are decorated with `@Public()`.
