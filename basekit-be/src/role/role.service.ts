@@ -21,8 +21,12 @@ export class RoleService {
     return this.ds.getRepository(Permission);
   }
 
-  findAll(pagination: PaginationInput = {}): Promise<IPaginatedResult<Role>> {
-    return findMany(this.roleRepo, pagination);
+  findAll(
+    pagination: PaginationInput = {},
+    search?: string,
+    searchFields: (keyof Role)[] = ["name", "description"],
+  ): Promise<IPaginatedResult<Role>> {
+    return findMany(this.roleRepo, pagination, search, searchFields);
   }
 
   async findOne(id: string): Promise<Role> {
@@ -102,8 +106,10 @@ export class RoleService {
 
   findAllPermissions(
     pagination: PaginationInput = {},
+    search?: string,
+    searchFields: (keyof Permission)[] = ["value", "description"],
   ): Promise<IPaginatedResult<Permission>> {
-    return findMany(this.permRepo, pagination);
+    return findMany(this.permRepo, pagination, search, searchFields);
   }
 
   async createPermission(

@@ -1,19 +1,20 @@
-import { useNavigate } from "@tanstack/react-router";
+import { useNavigate, useSearch } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { AppPage } from "#/lib/universal-layout/";
 import DataTable, { type IPagination } from "#/components/common/DataTable";
-import { CustomDate } from "#/components/common";
+import { CustomDate, SearchBar } from "#/components/common";
 import type { ColumnDef } from "@tanstack/react-table";
 import { useGetRoles } from "./queries/roles.query";
 import type { Role } from "./queries/roles.query";
 import { CreateRoleDialog } from "./components/CreateRoleDialog";
 
-export function RolesPage({ page }: { page: number }) {
+export function RolesPage() {
+  const { page, search } = useSearch({ strict: false });
   const { t } = useTranslation();
   const {
     data: { roles, ...pagination },
     loading,
-  } = useGetRoles(page);
+  } = useGetRoles(page, search);
   const navigate = useNavigate();
 
   const columns: ColumnDef<Role>[] = [
@@ -39,6 +40,7 @@ export function RolesPage({ page }: { page: number }) {
       headerRightComponent={<CreateRoleDialog />}
     >
       <DataTable
+        header={<SearchBar />}
         columns={columns}
         data={roles ?? []}
         isLoading={loading}

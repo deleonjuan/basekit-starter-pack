@@ -220,7 +220,7 @@ export default function DataTable({
   });
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full mt-1">
       {header}
       <div className="relative flex h-full mt-2">
         <ScrollArea className="absolute inset-0 rounded-md w-full">

@@ -18,8 +18,12 @@ export class UserService {
     return this.ds.getRepository(User);
   }
 
-  findAll(pagination: PaginationInput = {}): Promise<IPaginatedResult<User>> {
-    return findMany(this.repo, pagination);
+  findAll(
+    pagination: PaginationInput = {},
+    search?: string,
+    searchFields: (keyof User)[] = ["username"],
+  ): Promise<IPaginatedResult<User>> {
+    return findMany(this.repo, pagination, search, searchFields);
   }
 
   async findOne(id: string): Promise<User> {

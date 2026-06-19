@@ -18,8 +18,9 @@ export class UserResolver {
   @RequirePermissions("read:user")
   findAll(
     @Args("pagination", { nullable: true }) pagination?: PaginationInput,
+    @Args("search", { nullable: true }) search?: string,
   ): Promise<IPaginatedResult<User>> {
-    return this.userService.findAll(pagination);
+    return this.userService.findAll(pagination, search);
   }
 
   @Query(() => User, { nullable: true, name: "user" })

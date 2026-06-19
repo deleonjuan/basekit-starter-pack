@@ -18,8 +18,9 @@ export class RoleResolver {
   @RequirePermissions("read:role")
   findAll(
     @Args("pagination", { nullable: true }) pagination?: PaginationInput,
+    @Args("search", { nullable: true }) search?: string,
   ): Promise<IPaginatedResult<Role>> {
-    return this.roleService.findAll(pagination);
+    return this.roleService.findAll(pagination, search);
   }
 
   @Query(() => Role, { name: "role" })
@@ -81,8 +82,9 @@ export class RoleResolver {
   @RequirePermissions("read:permission")
   findAllPermissions(
     @Args("pagination", { nullable: true }) pagination?: PaginationInput,
+    @Args("search", { nullable: true }) search?: string,
   ): Promise<IPaginatedResult<Permission>> {
-    return this.roleService.findAllPermissions(pagination);
+    return this.roleService.findAllPermissions(pagination, search);
   }
 
   @Mutation(() => Permission, { name: "createPermission" })

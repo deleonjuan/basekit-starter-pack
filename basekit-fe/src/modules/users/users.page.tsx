@@ -1,20 +1,21 @@
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { AppPage } from "#/lib/universal-layout/";
 import DataTable, { type IPagination } from "#/components/common/DataTable";
-import { CustomDate } from "#/components/common";
+import { CustomDate, SearchBar } from "#/components/common";
 import type { ColumnDef } from "@tanstack/react-table";
 import { useGetUsers } from "./queries/users.query";
 import type { User } from "./queries/users.query";
 import { Badge } from "#/components/ui/badge";
 import { Button } from "#/components/ui/button";
 
-export function UsersPage({ page }: { page: number }) {
+export function UsersPage() {
+  const { page, search } = useSearch({ strict: false });
   const { t } = useTranslation();
   const {
     data: { users, ...pagination },
     loading,
-  } = useGetUsers(page);
+  } = useGetUsers(page, search);
   const navigate = useNavigate();
 
   const columns: ColumnDef<User>[] = [
@@ -46,6 +47,7 @@ export function UsersPage({ page }: { page: number }) {
       }
     >
       <DataTable
+        header={<SearchBar />}
         columns={columns}
         data={users ?? []}
         isLoading={loading}
