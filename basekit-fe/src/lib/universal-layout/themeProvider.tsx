@@ -1,53 +1,53 @@
-/* eslint-disable @typescript-eslint/require-await */
-/* eslint-disable @typescript-eslint/no-floating-promises */
-import { useRouter } from "@tanstack/react-router";
-import { createServerFn } from "@tanstack/react-start";
-import { createContext, type PropsWithChildren, use, useState } from "react";
-import { getCookie, setCookie } from "@tanstack/react-start/server";
+import {
+  createContext,
+  type PropsWithChildren,
+  use,
+  useEffect,
+  useState,
+} from "react";
+import { useSettingsStore, type Theme } from "#/store/settings.store";
 
-export type Theme = "light" | "dark";
+type ResolvedTheme = "light" | "dark";
+
 type ThemeContextVal = {
   theme: Theme;
+  resolvedTheme: ResolvedTheme;
   setTheme: (val: Theme) => void;
   toggleTheme: () => void;
 };
-type Props = PropsWithChildren<{ theme: Theme }>;
 
 const ThemeContext = createContext<ThemeContextVal | null>(null);
-const storageKey = "ui-theme";
 
-export const getThemeServerFn = createServerFn().handler(async () => {
-  return (getCookie(storageKey) || "light") as Theme;
-});
+export type { Theme };
 
-export const setThemeServerFn = createServerFn({ method: "POST" })
-  .inputValidator((data: unknown) => {
-    if (typeof data != "string" || (data != "dark" && data != "light")) {
-      throw new Error("Invalid theme provided");
-    }
-    return data as Theme;
-  })
-  .handler(async ({ data }) => {
-    setCookie(storageKey, data);
-  });
+function getSystemTheme(): ResolvedTheme {
+  if (typeof window === "undefined") return "light";
+  return window.matchMedia("(prefers-color-scheme: dark)").matches
+    ? "dark"
+    : "light";
+}
 
-export function ThemeProvider({ children, theme }: Props) {
-  const [_theme, _setTheme] = useState(theme);
-  const router = useRouter();
+export function ThemeProvider({ children }: PropsWithChildren) {
+  const theme = useSettingsStore((s) => s.theme);
+  const setTheme = useSettingsStore((s) => s.setTheme);
+  const [systemTheme, setSystemTheme] = useState<ResolvedTheme>(getSystemTheme);
 
-  function setTheme(val: Theme) {
-    setThemeServerFn({ data: val });
-    _setTheme(val);
-    router.invalidate();
-  }
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-color-scheme: dark)");
+    const handler = (e: MediaQueryListEvent) =>
+      setSystemTheme(e.matches ? "dark" : "light");
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+
+  const resolvedTheme: ResolvedTheme = theme === "system" ? systemTheme : theme;
 
   function toggleTheme() {
-    if (_theme === "dark") setTheme("light");
-    else setTheme("dark");
+    setTheme(resolvedTheme === "dark" ? "light" : "dark");
   }
 
   return (
-    <ThemeContext value={{ theme, setTheme, toggleTheme }}>
+    <ThemeContext value={{ theme, resolvedTheme, setTheme, toggleTheme }}>
       {children}
     </ThemeContext>
   );

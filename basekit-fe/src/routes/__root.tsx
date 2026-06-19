@@ -54,7 +54,7 @@ function RootComponent({ children }: Readonly<{ children: React.ReactNode }>) {
   const { apolloClient } = Route.useRouteContext();
 
   return (
-    <ThemeProvider theme={"light"}>
+    <ThemeProvider>
       <ApolloProvider client={apolloClient}>
         <RootDocument>{children}</RootDocument>
       </ApolloProvider>
@@ -63,9 +63,9 @@ function RootComponent({ children }: Readonly<{ children: React.ReactNode }>) {
 }
 
 function RootDocument({ children }: { children: React.ReactNode }) {
-  const { theme } = useTheme();
+  const { resolvedTheme } = useTheme();
   return (
-    <html lang="en" className={theme} data-theme={theme}>
+    <html lang="en" className={resolvedTheme} data-theme={resolvedTheme}>
       <head>
         <HeadContent />
       </head>

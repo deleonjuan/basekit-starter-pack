@@ -83,6 +83,20 @@ type PaginatedPermissions {
   totalPages: Int!
 }
 
+type Setting {
+  key: String!
+  value: JSON!
+  scope: String!
+  type: String!
+  label: String!
+  description: String
+  options: [String!]
+  isDefault: Boolean!
+}
+
+"""Arbitrary JSON value"""
+scalar JSON
+
 type Query {
   tenants(pagination: PaginationInput): PaginatedTenants!
   users(pagination: PaginationInput): PaginatedUsers!
@@ -91,6 +105,8 @@ type Query {
   roles(pagination: PaginationInput): PaginatedRoles!
   role(id: ID!): Role!
   permissions(pagination: PaginationInput): PaginatedPermissions!
+  globalSettings: [Setting!]!
+  personalSettings: [Setting!]!
 }
 
 input PaginationInput {
@@ -115,6 +131,10 @@ type Mutation {
   revokePermission(roleId: ID!, permissionId: ID!): Role!
   syncPermissions(roleId: ID!, assign: [ID!]!, revoke: [ID!]!): Role!
   createPermission(value: String!, description: String): Permission!
+  updateGlobalSetting(input: UpdateSettingInput!): Setting!
+  resetGlobalSetting(key: String!): Setting!
+  updatePersonalSetting(input: UpdateSettingInput!): Setting!
+  resetPersonalSetting(key: String!): Setting!
 }
 
 input LoginInput {
@@ -141,4 +161,9 @@ input CreateRoleInput {
 input UpdateRoleInput {
   name: String
   description: String
+}
+
+input UpdateSettingInput {
+  key: String!
+  value: JSON!
 }

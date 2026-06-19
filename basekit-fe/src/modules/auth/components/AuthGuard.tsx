@@ -2,6 +2,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { useGetCurrentUser } from "../queries/getCurrentUser.query";
 import { useAuthRefresh } from "../hooks/useAuthRefresh";
+import { useGetPersonalSettings } from "#/modules/settings/queries/getPersonalSettings.query";
+import { useSettingsStore } from "#/store/settings.store";
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -14,6 +16,18 @@ export function AuthGuard({ children }: AuthGuardProps) {
   const navigate = useNavigate();
 
   const user = data?.me;
+  const applySettings = useSettingsStore((s) => s.applySettings);
+  const settingsApplied = useRef(false);
+
+  const { data: settingsData } = useGetPersonalSettings({
+    skip: !user,
+  });
+
+  useEffect(() => {
+    if (!settingsData?.personalSettings || settingsApplied.current) return;
+    settingsApplied.current = true;
+    applySettings(settingsData.personalSettings);
+  }, [settingsData, applySettings]);
 
   const redirectToLogin = useCallback(() => {
     navigate({ to: "/login" });
