@@ -11,6 +11,8 @@ import appCss from "../styles.css?url";
 import type { ApolloClientIntegration } from "@apollo/client-integration-tanstack-start";
 import { NotFoundScreen } from "#/components/screens/NotFoundScreen";
 import { ErrorScreen } from "#/components/screens/ErrorScreen";
+import { ThemeProvider, useTheme } from "#/lib/universal-layout";
+import { ApolloProvider } from "@apollo/client/react";
 
 interface MyRouterContext extends ApolloClientIntegration.RouterContext {}
 
@@ -45,12 +47,25 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
   }),
   notFoundComponent: NotFoundScreen,
   errorComponent: ErrorScreen,
-  shellComponent: RootDocument,
+  shellComponent: RootComponent,
 });
 
-function RootDocument({ children }: { children: React.ReactNode }) {
+function RootComponent({ children }: Readonly<{ children: React.ReactNode }>) {
+  const { apolloClient } = Route.useRouteContext();
+
   return (
-    <html lang="en">
+    <ThemeProvider theme={"light"}>
+      <ApolloProvider client={apolloClient}>
+        <RootDocument>{children}</RootDocument>
+      </ApolloProvider>
+    </ThemeProvider>
+  );
+}
+
+function RootDocument({ children }: { children: React.ReactNode }) {
+  const { theme } = useTheme();
+  return (
+    <html lang="en" className={theme} data-theme={theme}>
       <head>
         <HeadContent />
       </head>
