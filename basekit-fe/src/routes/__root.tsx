@@ -9,6 +9,8 @@ import { TanStackDevtools } from "@tanstack/react-devtools";
 import appCss from "../styles.css?url";
 
 import type { ApolloClientIntegration } from "@apollo/client-integration-tanstack-start";
+import { NotFoundScreen } from "#/components/screens/NotFoundScreen";
+import { ErrorScreen } from "#/components/screens/ErrorScreen";
 
 interface MyRouterContext extends ApolloClientIntegration.RouterContext {}
 
@@ -41,6 +43,8 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       { rel: "icon", href: "/favicon.ico" },
     ],
   }),
+  notFoundComponent: NotFoundScreen,
+  errorComponent: ErrorScreen,
   shellComponent: RootDocument,
 });
 
