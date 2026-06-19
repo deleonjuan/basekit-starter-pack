@@ -7,7 +7,7 @@ import { CreateRoleInput } from "./dto/create-role.input";
 import { UpdateRoleInput } from "./dto/update-role.input";
 import { PaginationInput } from "../common/dto/pagination.input";
 import { IPaginatedResult } from "../common/types/paginated-result.type";
-import { findMany } from "../common/utils/find-many.util";
+import { findMany, type FilterMap } from "../common/utils/find-many.util";
 
 @Injectable({ scope: Scope.REQUEST })
 export class RoleService {
@@ -25,8 +25,9 @@ export class RoleService {
     pagination: PaginationInput = {},
     search?: string,
     searchFields: (keyof Role)[] = ["name", "description"],
+    filters?: FilterMap,
   ): Promise<IPaginatedResult<Role>> {
-    return findMany(this.roleRepo, pagination, search, searchFields);
+    return findMany(this.roleRepo, pagination, search, searchFields, filters);
   }
 
   async findOne(id: string): Promise<Role> {
@@ -108,8 +109,9 @@ export class RoleService {
     pagination: PaginationInput = {},
     search?: string,
     searchFields: (keyof Permission)[] = ["value", "description"],
+    filters?: FilterMap,
   ): Promise<IPaginatedResult<Permission>> {
-    return findMany(this.permRepo, pagination, search, searchFields);
+    return findMany(this.permRepo, pagination, search, searchFields, filters);
   }
 
   async createPermission(

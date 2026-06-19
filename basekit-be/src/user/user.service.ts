@@ -8,7 +8,7 @@ import { CreateUserInput } from "./dto/create-user.input";
 import { UpdateUserInput } from "./dto/update-user.input";
 import { PaginationInput } from "../common/dto/pagination.input";
 import { IPaginatedResult } from "../common/types/paginated-result.type";
-import { findMany } from "../common/utils/find-many.util";
+import { findMany, type FilterMap } from "../common/utils/find-many.util";
 
 @Injectable({ scope: Scope.REQUEST })
 export class UserService {
@@ -22,8 +22,12 @@ export class UserService {
     pagination: PaginationInput = {},
     search?: string,
     searchFields: (keyof User)[] = ["username"],
+    filters?: FilterMap,
   ): Promise<IPaginatedResult<User>> {
-    return findMany(this.repo, pagination, search, searchFields);
+    return findMany(this.repo, pagination, search, searchFields, {
+      isSuperAdmin: false,
+      ...filters,
+    });
   }
 
   async findOne(id: string): Promise<User> {

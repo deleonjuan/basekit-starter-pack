@@ -9,6 +9,8 @@ import { PaginatedRoles } from "./types/paginated-roles.type";
 import { PaginatedPermissions } from "./types/paginated-permissions.type";
 import { IPaginatedResult } from "../common/types/paginated-result.type";
 import { RequirePermissions } from "../auth/decorators/permissions.decorator";
+import { GraphQLJSON } from "../common/scalars/json.scalar";
+import type { FilterMap } from "../common/utils/find-many.util";
 
 @Resolver(() => Role)
 export class RoleResolver {
@@ -19,8 +21,10 @@ export class RoleResolver {
   findAll(
     @Args("pagination", { nullable: true }) pagination?: PaginationInput,
     @Args("search", { nullable: true }) search?: string,
+    @Args("filters", { nullable: true, type: () => GraphQLJSON })
+    filters?: FilterMap,
   ): Promise<IPaginatedResult<Role>> {
-    return this.roleService.findAll(pagination, search);
+    return this.roleService.findAll(pagination, search, undefined, filters);
   }
 
   @Query(() => Role, { name: "role" })
@@ -83,8 +87,15 @@ export class RoleResolver {
   findAllPermissions(
     @Args("pagination", { nullable: true }) pagination?: PaginationInput,
     @Args("search", { nullable: true }) search?: string,
+    @Args("filters", { nullable: true, type: () => GraphQLJSON })
+    filters?: FilterMap,
   ): Promise<IPaginatedResult<Permission>> {
-    return this.roleService.findAllPermissions(pagination, search);
+    return this.roleService.findAllPermissions(
+      pagination,
+      search,
+      undefined,
+      filters,
+    );
   }
 
   @Mutation(() => Permission, { name: "createPermission" })

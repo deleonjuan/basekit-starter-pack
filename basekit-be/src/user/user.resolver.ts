@@ -9,6 +9,8 @@ import { IPaginatedResult } from "../common/types/paginated-result.type";
 import { RequirePermissions } from "../auth/decorators/permissions.decorator";
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
 import type { JwtPayload } from "../auth/jwt.strategy";
+import { GraphQLJSON } from "../common/scalars/json.scalar";
+import type { FilterMap } from "../common/utils/find-many.util";
 
 @Resolver(() => User)
 export class UserResolver {
@@ -19,8 +21,10 @@ export class UserResolver {
   findAll(
     @Args("pagination", { nullable: true }) pagination?: PaginationInput,
     @Args("search", { nullable: true }) search?: string,
+    @Args("filters", { nullable: true, type: () => GraphQLJSON })
+    filters?: FilterMap,
   ): Promise<IPaginatedResult<User>> {
-    return this.userService.findAll(pagination, search);
+    return this.userService.findAll(pagination, search, undefined, filters);
   }
 
   @Query(() => User, { nullable: true, name: "user" })

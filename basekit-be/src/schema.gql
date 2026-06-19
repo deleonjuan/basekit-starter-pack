@@ -99,12 +99,12 @@ scalar JSON
 
 type Query {
   tenants(pagination: PaginationInput): PaginatedTenants!
-  users(pagination: PaginationInput, search: String): PaginatedUsers!
+  users(pagination: PaginationInput, search: String, filters: JSON): PaginatedUsers!
   user(id: ID!): User
   me: User!
-  roles(pagination: PaginationInput, search: String): PaginatedRoles!
+  roles(pagination: PaginationInput, search: String, filters: JSON): PaginatedRoles!
   role(id: ID!): Role!
-  permissions(pagination: PaginationInput, search: String): PaginatedPermissions!
+  permissions(pagination: PaginationInput, search: String, filters: JSON): PaginatedPermissions!
   globalSettings: [Setting!]!
   personalSettings: [Setting!]!
 }
