@@ -9,6 +9,13 @@
       "create": "Crear",
       "creating": "Creando...",
       "backToHome": "Volver al inicio"
+    },
+    "nav": {
+      "dashboard": "Dashboard",
+      "users": "Usuarios",
+      "roles": "Roles",
+      "settings": "Configuración",
+      "logout": "Cerrar sesión"
     }
   },
   "en": {
@@ -21,6 +28,13 @@
       "create": "Create",
       "creating": "Creating...",
       "backToHome": "Back to home"
+    },
+    "nav": {
+      "dashboard": "Dashboard",
+      "users": "Users",
+      "roles": "Roles",
+      "settings": "Settings",
+      "logout": "Log out"
     }
   }
 }

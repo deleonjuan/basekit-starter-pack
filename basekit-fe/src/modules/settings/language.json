@@ -8,6 +8,11 @@
         "light": "Claro",
         "dark": "Oscuro",
         "system": "Sistema"
+      },
+      "language": {
+        "title": "Idioma",
+        "es": "Español",
+        "en": "Inglés"
       }
     }
   },
@@ -20,6 +25,11 @@
         "light": "Light",
         "dark": "Dark",
         "system": "System"
+      },
+      "language": {
+        "title": "Language",
+        "es": "Spanish",
+        "en": "English"
       }
     }
   }
