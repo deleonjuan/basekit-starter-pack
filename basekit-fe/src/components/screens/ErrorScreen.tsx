@@ -1,10 +1,12 @@
 import { Link } from "@tanstack/react-router";
 import { useApolloClient } from "@apollo/client/react";
+import { useTranslation } from "react-i18next";
 import { Button } from "#/components/ui/button";
 import { AlertTriangleIcon } from "lucide-react";
 import type { ErrorComponentProps } from "@tanstack/react-router";
 
 export function ErrorScreen({ error, reset }: ErrorComponentProps) {
+  const { t } = useTranslation();
   const client = useApolloClient();
 
   const handleReset = async () => {
@@ -24,9 +26,9 @@ export function ErrorScreen({ error, reset }: ErrorComponentProps) {
           className="text-destructive"
           strokeWidth={1.5}
         />
-        <h1 className="text-2xl font-bold">Algo salió mal</h1>
+        <h1 className="text-2xl font-bold">{t("screens.error.heading")}</h1>
         <p className="text-sm text-muted-foreground max-w-sm">
-          {error.message || "Ocurrió un error inesperado."}
+          {error.message || t("screens.error.fallbackMessage")}
         </p>
         {import.meta.env.DEV && error.stack && (
           <pre className="mt-2 max-w-xl overflow-auto rounded-lg bg-muted p-4 text-left text-xs text-muted-foreground">
@@ -35,9 +37,9 @@ export function ErrorScreen({ error, reset }: ErrorComponentProps) {
         )}
       </div>
       <div className="flex gap-3">
-        <Button onClick={handleReset}>Reintentar</Button>
+        <Button onClick={handleReset}>{t("screens.error.retry")}</Button>
         <Link to="/admin">
-          <Button variant="outline">Volver al inicio</Button>
+          <Button variant="outline">{t("screens.error.backToHome")}</Button>
         </Link>
       </div>
     </div>

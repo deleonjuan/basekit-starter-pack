@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { AppPage } from "#/lib/universal-layout/";
 import { FormGenerator, useAppForm, field } from "#/lib/form-generator";
 import type { FormSchemaField } from "#/lib/form-generator";
@@ -11,20 +12,6 @@ import { PencilIcon } from "lucide-react";
 import type { User } from "./queries/users.query";
 import RolesTable from "./components/RolesTable";
 
-const getFormSchema = (isEditing: boolean): FormSchemaField[] => [
-  {
-    title: "Nombre de usuario",
-    fields: [
-      field.textField({
-        name: "username",
-        type: "text",
-        placeholder: "nombre-usuario",
-        disabled: !isEditing,
-      }),
-    ],
-  },
-];
-
 function UserDetailForm({
   userId,
   username,
@@ -32,8 +19,23 @@ function UserDetailForm({
   userId: string;
   username: string;
 }) {
+  const { t } = useTranslation();
   const [isEditing, setIsEditing] = useState(false);
   const [updateUser, { loading, error }] = useUpdateUser();
+
+  const getFormSchema = (): FormSchemaField[] => [
+    {
+      title: t("users.detail.sectionTitle"),
+      fields: [
+        field.textField({
+          name: "username",
+          type: "text",
+          placeholder: t("users.detail.usernamePlaceholder"),
+          disabled: !isEditing,
+        }),
+      ],
+    },
+  ];
 
   const form = useAppForm({
     defaultValues: { username },
@@ -60,11 +62,13 @@ function UserDetailForm({
     >
       <section className="flex flex-col gap-4 pb-6">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold">Usuario</h2>
+          <h2 className="text-lg font-semibold">
+            {t("users.detail.sectionTitle")}
+          </h2>
           {!isEditing ? (
             <Button variant="outline" onClick={() => setIsEditing(true)}>
               <PencilIcon size={16} />
-              Editar
+              {t("common.edit")}
             </Button>
           ) : (
             <div className="flex justify-end gap-2">
@@ -74,22 +78,20 @@ function UserDetailForm({
                 onClick={handleCancel}
                 disabled={loading}
               >
-                Cancelar
+                {t("common.cancel")}
               </Button>
               <Button type="submit" disabled={loading}>
-                {loading ? "Guardando..." : "Guardar"}
+                {loading ? t("common.saving") : t("common.save")}
               </Button>
             </div>
           )}
         </div>
-
         <div className="xl:w-1/2 w-full">
-          <FormGenerator form={form} formSchema={getFormSchema(isEditing)} />
+          <FormGenerator form={form} formSchema={getFormSchema()} />
         </div>
-
         {error && (
           <p className="text-sm text-red-500">
-            {error.message ?? "Error al actualizar el usuario."}
+            {error.message ?? t("users.detail.updateError")}
           </p>
         )}
       </section>
@@ -98,26 +100,29 @@ function UserDetailForm({
 }
 
 function DangerZone({ userId, user }: { userId: string; user: User | null }) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [updateUser, { loading }] = useUpdateUser();
   const isActive = user?.isActive;
 
   const labels = isActive
     ? {
-        sectionTitle: "Desactivar usuario",
-        description:
-          "Una vez desactivado, este usuario no podrá iniciar sesión o ejecutar ninguna operación.",
-        triggerLabel: "Desactivar este usuario",
-        dialogTitle: "¿Desactivar usuario?",
-        submitLabel: loading ? "Desactivando..." : "Desactivar",
+        sectionTitle: t("users.detail.dangerZone.deactivate.sectionTitle"),
+        description: t("users.detail.dangerZone.deactivate.description"),
+        triggerLabel: t("users.detail.dangerZone.deactivate.triggerLabel"),
+        dialogTitle: t("users.detail.dangerZone.deactivate.dialogTitle"),
+        submitLabel: loading
+          ? t("users.detail.dangerZone.deactivate.submitting")
+          : t("users.detail.dangerZone.deactivate.submit"),
       }
     : {
-        sectionTitle: "Activar usuario",
-        description:
-          "Una vez activado, este usuario podrá iniciar sesión y ejecutar operaciones.",
-        triggerLabel: "Activar este usuario",
-        dialogTitle: "¿Activar usuario?",
-        submitLabel: loading ? "Activando..." : "Activar",
+        sectionTitle: t("users.detail.dangerZone.activate.sectionTitle"),
+        description: t("users.detail.dangerZone.activate.description"),
+        triggerLabel: t("users.detail.dangerZone.activate.triggerLabel"),
+        dialogTitle: t("users.detail.dangerZone.activate.dialogTitle"),
+        submitLabel: loading
+          ? t("users.detail.dangerZone.activate.submitting")
+          : t("users.detail.dangerZone.activate.submit"),
       };
 
   const handleConfirm = () => {
@@ -129,7 +134,9 @@ function DangerZone({ userId, user }: { userId: string; user: User | null }) {
 
   return (
     <section className="flex flex-col gap-4">
-      <h2 className="text-lg font-semibold">Zona de peligro</h2>
+      <h2 className="text-lg font-semibold">
+        {t("users.detail.dangerZone.title")}
+      </h2>
       <div className="flex flex-col gap-1">
         <p className="text-sm font-medium">{labels.sectionTitle}</p>
         <p className="text-sm text-muted-foreground">{labels.description}</p>
@@ -172,10 +179,11 @@ function UserDetailContainer({
   userId: string;
   user: GetUserData["user"] | null;
 }) {
+  const { t } = useTranslation();
   return (
     <AppPage
-      title="Detalle de Usuario"
-      goBackLink={{ to: "/admin/users", label: "Usuarios" }}
+      title={t("users.detail.title")}
+      goBackLink={{ to: "/admin/users", label: t("users.detail.backLabel") }}
     >
       <div className="mt-8 flex flex-col gap-10">
         <UserDetailForm userId={userId} username={user?.username ?? ""} />
@@ -186,21 +194,18 @@ function UserDetailContainer({
   );
 }
 
-interface UserDetailPageProps {
-  userId: string;
-}
-
-export function UserDetailPage({ userId }: UserDetailPageProps) {
+export function UserDetailPage({ userId }: { userId: string }) {
+  const { t } = useTranslation();
   const { user, loading } = useGetUser(userId);
 
   if (loading) {
     return (
       <AppPage
-        title="Detalle de Usuario"
-        goBackLink={{ to: "/admin/users", label: "Usuarios" }}
+        title={t("users.detail.title")}
+        goBackLink={{ to: "/admin/users", label: t("users.detail.backLabel") }}
       >
         <div className="mt-8">
-          <p className="text-sm text-muted-foreground">Cargando...</p>
+          <p className="text-sm text-muted-foreground">{t("common.loading")}</p>
         </div>
       </AppPage>
     );

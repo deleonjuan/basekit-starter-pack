@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { AppPage } from "#/lib/universal-layout/";
 import { FormGenerator, useAppForm, field } from "#/lib/form-generator";
 import type { FormSchemaField } from "#/lib/form-generator";
@@ -8,31 +9,6 @@ import { useGetRole } from "./queries/getRole.query";
 import { useUpdateRole } from "./queries/updateRole.mutation";
 import { PermissionsTable } from "./components/PermissionsTable";
 import { CustomDate } from "#/components/common";
-
-const getFormSchema = (isEditing: boolean): FormSchemaField[] => [
-  {
-    title: "Nombre",
-    fields: [
-      field.textField({
-        name: "name",
-        type: "text",
-        placeholder: "nombre-del-rol",
-        disabled: !isEditing,
-      }),
-    ],
-  },
-  {
-    title: "Description",
-    fields: [
-      field.textField({
-        name: "description",
-        type: "text",
-        placeholder: "Descripción del rol",
-        disabled: !isEditing,
-      }),
-    ],
-  },
-];
 
 interface RoleDetailFormProps {
   roleId: string;
@@ -47,8 +23,34 @@ function RoleDetailForm({
   description,
   createdAt,
 }: RoleDetailFormProps) {
+  const { t } = useTranslation();
   const [isEditing, setIsEditing] = useState(false);
   const [updateRole, { loading, error }] = useUpdateRole();
+
+  const getFormSchema = (): FormSchemaField[] => [
+    {
+      title: t("roles.detail.nameTitle"),
+      fields: [
+        field.textField({
+          name: "name",
+          type: "text",
+          placeholder: t("roles.detail.namePlaceholder"),
+          disabled: !isEditing,
+        }),
+      ],
+    },
+    {
+      title: t("roles.detail.descriptionTitle"),
+      fields: [
+        field.textField({
+          name: "description",
+          type: "text",
+          placeholder: t("roles.detail.descriptionPlaceholder"),
+          disabled: !isEditing,
+        }),
+      ],
+    },
+  ];
 
   const form = useAppForm({
     defaultValues: {
@@ -85,11 +87,13 @@ function RoleDetailForm({
     >
       <section className="flex flex-col gap-4 pb-6">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold">Rol</h2>
+          <h2 className="text-lg font-semibold">
+            {t("roles.detail.sectionTitle")}
+          </h2>
           {!isEditing ? (
             <Button variant="outline" onClick={() => setIsEditing(true)}>
               <PencilIcon size={16} />
-              Editar
+              {t("common.edit")}
             </Button>
           ) : (
             <div className="flex justify-end gap-2">
@@ -99,22 +103,20 @@ function RoleDetailForm({
                 onClick={handleCancel}
                 disabled={loading}
               >
-                Cancelar
+                {t("common.cancel")}
               </Button>
               <Button type="submit" disabled={loading}>
-                {loading ? "Guardando..." : "Guardar"}
+                {loading ? t("common.saving") : t("common.save")}
               </Button>
             </div>
           )}
         </div>
-
         <div className="xl:w-1/2 w-full">
-          <FormGenerator form={form} formSchema={getFormSchema(isEditing)} />
+          <FormGenerator form={form} formSchema={getFormSchema()} />
         </div>
-
         {error && (
           <p className="text-sm text-red-500">
-            {error.message ?? "Error al actualizar el rol."}
+            {error.message ?? t("roles.detail.updateError")}
           </p>
         )}
       </section>
@@ -135,15 +137,16 @@ function RoleDetailContainer({
   refetch,
   page,
 }: RoleDetailContainerProps) {
+  const { t } = useTranslation();
   return (
     <AppPage
       title={role.name}
       subtitle={
         <>
-          Creado: <CustomDate value={role.createdAt} />
+          {t("roles.detail.createdLabel")} <CustomDate value={role.createdAt} />
         </>
       }
-      goBackLink={{ to: "/admin/roles", label: "Roles" }}
+      goBackLink={{ to: "/admin/roles", label: t("roles.detail.backLabel") }}
     >
       <div className="mt-8 flex flex-col gap-10">
         <RoleDetailForm
@@ -152,7 +155,6 @@ function RoleDetailContainer({
           description={role.description}
           createdAt={role.createdAt}
         />
-
         <PermissionsTable
           roleId={roleId}
           assignedPermissions={role.permissions}
@@ -170,16 +172,17 @@ interface RoleDetailPageProps {
 }
 
 export function RoleDetailPage({ roleId, page }: RoleDetailPageProps) {
+  const { t } = useTranslation();
   const { role, loading, refetch } = useGetRole(roleId);
 
   if (loading) {
     return (
       <AppPage
-        title="Detalle de Rol"
-        goBackLink={{ to: "/admin/roles", label: "Roles" }}
+        title={t("roles.detail.title")}
+        goBackLink={{ to: "/admin/roles", label: t("roles.detail.backLabel") }}
       >
         <div className="mt-8">
-          <p className="text-sm text-muted-foreground">Cargando...</p>
+          <p className="text-sm text-muted-foreground">{t("common.loading")}</p>
         </div>
       </AppPage>
     );
@@ -188,11 +191,13 @@ export function RoleDetailPage({ roleId, page }: RoleDetailPageProps) {
   if (!role) {
     return (
       <AppPage
-        title="Detalle de Rol"
-        goBackLink={{ to: "/admin/roles", label: "Roles" }}
+        title={t("roles.detail.title")}
+        goBackLink={{ to: "/admin/roles", label: t("roles.detail.backLabel") }}
       >
         <div className="mt-8">
-          <p className="text-sm text-muted-foreground">Rol no encontrado.</p>
+          <p className="text-sm text-muted-foreground">
+            {t("roles.detail.notFound")}
+          </p>
         </div>
       </AppPage>
     );

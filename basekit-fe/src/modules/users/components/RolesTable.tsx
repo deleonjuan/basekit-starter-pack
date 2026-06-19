@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import type { ColumnDef } from "@tanstack/react-table";
 import { SimpleDataTable } from "#/components/common/DataTable";
 import { CustomDate, AppDialog } from "#/components/common";
@@ -8,21 +9,16 @@ import type { UserRole } from "../queries/getUser.query";
 import { AssignRoleDialog } from "./AssignRoleDialog";
 import { useRevokeRole } from "../queries/revokeRole.mutation";
 
-interface RevokeRoleButtonProps {
+function RevokeRoleButton({
+  userId,
+  role,
+}: {
   userId: string;
   role: UserRole;
-}
-
-function RevokeRoleButton({ userId, role }: RevokeRoleButtonProps) {
+}) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [revokeRole, { loading }] = useRevokeRole();
-
-  const handleConfirm = async () => {
-    await revokeRole({
-      variables: { userId, roleId: role.id },
-      onCompleted: () => setOpen(false),
-    });
-  };
 
   return (
     <AppDialog
@@ -36,47 +32,29 @@ function RevokeRoleButton({ userId, role }: RevokeRoleButtonProps) {
         />
       }
       triggerLabel={<Trash2Icon size={16} />}
-      title="Desasignar rol"
-      onSubmit={handleConfirm}
-      onSubmitLabel={loading ? "Desasignando..." : "Desasignar"}
+      title={t("users.rolesTable.revokeDialog.title")}
+      onSubmit={async () => {
+        await revokeRole({
+          variables: { userId, roleId: role.id },
+          onCompleted: () => setOpen(false),
+        });
+      }}
+      onSubmitLabel={
+        loading
+          ? t("users.rolesTable.revokeDialog.submitting")
+          : t("users.rolesTable.revokeDialog.submit")
+      }
       disable={loading}
       showCloseButton={false}
       properties={{ submitButton: { variant: "destructive" } }}
     >
       <p className="text-sm text-muted-foreground">
-        ¿Estás seguro que deseas desasignar el rol{" "}
-        <span className="font-medium text-foreground">{role.name}</span> de este
-        usuario?
+        {t("users.rolesTable.revokeDialog.confirmPrefix")}{" "}
+        <span className="font-medium text-foreground">{role.name}</span>{" "}
+        {t("users.rolesTable.revokeDialog.confirmSuffix")}
       </p>
     </AppDialog>
   );
-}
-
-function getColumns(userId: string): ColumnDef<UserRole>[] {
-  return [
-    {
-      accessorKey: "name",
-      header: "Nombre",
-    },
-    {
-      accessorKey: "description",
-      header: "Descripción",
-      cell: ({ getValue }) => getValue<string | null>() ?? "—",
-    },
-    {
-      accessorKey: "createdAt",
-      header: "Asignado",
-      cell: ({ getValue }) => <CustomDate value={getValue<string>()} />,
-    },
-    {
-      id: "actions",
-      cell: ({ row }) => (
-        <div className="flex justify-end">
-          <RevokeRoleButton userId={userId} role={row.original} />
-        </div>
-      ),
-    },
-  ];
 }
 
 interface RolesTableProps {
@@ -90,20 +68,44 @@ export default function RolesTable({
   roles,
   loading,
 }: RolesTableProps) {
+  const { t } = useTranslation();
+
+  const columns: ColumnDef<UserRole>[] = [
+    { accessorKey: "name", header: t("users.rolesTable.columnName") },
+    {
+      accessorKey: "description",
+      header: t("users.rolesTable.columnDescription"),
+      cell: ({ getValue }) => getValue<string | null>() ?? "—",
+    },
+    {
+      accessorKey: "createdAt",
+      header: t("users.rolesTable.columnAssigned"),
+      cell: ({ getValue }) => <CustomDate value={getValue<string>()} />,
+    },
+    {
+      id: "actions",
+      cell: ({ row }) => (
+        <div className="flex justify-end">
+          <RevokeRoleButton userId={userId} role={row.original} />
+        </div>
+      ),
+    },
+  ];
+
   return (
     <section className="flex flex-col gap-4 pb-8">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold">Roles</h2>
+        <h2 className="text-lg font-semibold">{t("users.rolesTable.title")}</h2>
         <AssignRoleDialog userId={userId} assignedRoles={roles} />
       </div>
       <SimpleDataTable
-        columns={getColumns(userId)}
+        columns={columns}
         data={roles}
         isLoading={loading}
         hideHeaders={roles.length < 1}
         noInfoBanner={
           <div className="bg-muted flex justify-center py-4">
-            Asigna un rol a este usuario
+            {t("users.rolesTable.noRoles")}
           </div>
         }
       />

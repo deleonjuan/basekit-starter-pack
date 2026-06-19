@@ -1,0 +1,32 @@
+{
+  "es": {
+    "auth": {
+      "login": {
+        "title": "Iniciar sesión",
+        "subtitle": "Ingresa tus credenciales para continuar.",
+        "username": "Usuario",
+        "usernamePlaceholder": "tu-usuario",
+        "password": "Contraseña",
+        "passwordPlaceholder": "••••••••",
+        "submit": "Iniciar sesión",
+        "submitting": "Iniciando sesión…",
+        "error": "Credenciales inválidas."
+      }
+    }
+  },
+  "en": {
+    "auth": {
+      "login": {
+        "title": "Sign in",
+        "subtitle": "Enter your credentials to continue.",
+        "username": "Username",
+        "usernamePlaceholder": "your-username",
+        "password": "Password",
+        "passwordPlaceholder": "••••••••",
+        "submit": "Sign in",
+        "submitting": "Signing in…",
+        "error": "Invalid credentials."
+      }
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "es": {
+    "settings": {
+      "page": { "title": "Configuración" },
+      "tabs": { "system": "Sistema" },
+      "theme": {
+        "title": "Tema",
+        "light": "Claro",
+        "dark": "Oscuro",
+        "system": "Sistema"
+      }
+    }
+  },
+  "en": {
+    "settings": {
+      "page": { "title": "Settings" },
+      "tabs": { "system": "System" },
+      "theme": {
+        "title": "Theme",
+        "light": "Light",
+        "dark": "Dark",
+        "system": "System"
+      }
+    }
+  }
+}

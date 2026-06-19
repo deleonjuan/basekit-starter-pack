@@ -1,0 +1,154 @@
+{
+  "es": {
+    "users": {
+      "page": {
+        "title": "Usuarios",
+        "new": "Nuevo"
+      },
+      "table": {
+        "username": "Usuario",
+        "active": "Estado",
+        "createdAt": "Creado",
+        "activeStatus": "Activo",
+        "inactiveStatus": "Inactivo"
+      },
+      "newUser": {
+        "title": "Nuevo Usuario",
+        "backLabel": "Usuarios",
+        "usernameTitle": "Nombre de usuario",
+        "usernamePlaceholder": "nombre-usuario",
+        "passwordTitle": "Contraseña",
+        "passwordPlaceholder": "••••••••",
+        "submit": "Crear Usuario",
+        "submitting": "Guardando...",
+        "error": "Error al crear el usuario."
+      },
+      "detail": {
+        "title": "Detalle de Usuario",
+        "backLabel": "Usuarios",
+        "loading": "Cargando...",
+        "sectionTitle": "Usuario",
+        "usernamePlaceholder": "nombre-usuario",
+        "updateError": "Error al actualizar el usuario.",
+        "dangerZone": {
+          "title": "Zona de peligro",
+          "deactivate": {
+            "sectionTitle": "Desactivar usuario",
+            "description": "Una vez desactivado, este usuario no podrá iniciar sesión o ejecutar ninguna operación.",
+            "triggerLabel": "Desactivar este usuario",
+            "dialogTitle": "¿Desactivar usuario?",
+            "submit": "Desactivar",
+            "submitting": "Desactivando..."
+          },
+          "activate": {
+            "sectionTitle": "Activar usuario",
+            "description": "Una vez activado, este usuario podrá iniciar sesión y ejecutar operaciones.",
+            "triggerLabel": "Activar este usuario",
+            "dialogTitle": "¿Activar usuario?",
+            "submit": "Activar",
+            "submitting": "Activando..."
+          }
+        }
+      },
+      "rolesTable": {
+        "title": "Roles",
+        "columnName": "Nombre",
+        "columnDescription": "Descripción",
+        "columnAssigned": "Asignado",
+        "noRoles": "Asigna un rol a este usuario",
+        "revokeDialog": {
+          "title": "Desasignar rol",
+          "confirmPrefix": "¿Estás seguro que deseas desasignar el rol",
+          "confirmSuffix": "de este usuario?",
+          "submit": "Desasignar",
+          "submitting": "Desasignando..."
+        }
+      },
+      "assignRoleDialog": {
+        "trigger": "Asignar rol",
+        "title": "Asignar rol",
+        "searchPlaceholder": "Buscar rol...",
+        "noResults": "No se encontraron roles",
+        "submit": "Aceptar",
+        "submitting": "Asignando...",
+        "error": "Error al asignar el rol."
+      }
+    }
+  },
+  "en": {
+    "users": {
+      "page": {
+        "title": "Users",
+        "new": "New"
+      },
+      "table": {
+        "username": "Username",
+        "active": "Status",
+        "createdAt": "Created",
+        "activeStatus": "Active",
+        "inactiveStatus": "Inactive"
+      },
+      "newUser": {
+        "title": "New User",
+        "backLabel": "Users",
+        "usernameTitle": "Username",
+        "usernamePlaceholder": "username",
+        "passwordTitle": "Password",
+        "passwordPlaceholder": "••••••••",
+        "submit": "Create User",
+        "submitting": "Saving...",
+        "error": "Error creating user."
+      },
+      "detail": {
+        "title": "User Detail",
+        "backLabel": "Users",
+        "loading": "Loading...",
+        "sectionTitle": "User",
+        "usernamePlaceholder": "username",
+        "updateError": "Error updating user.",
+        "dangerZone": {
+          "title": "Danger zone",
+          "deactivate": {
+            "sectionTitle": "Deactivate user",
+            "description": "Once deactivated, this user will not be able to log in or perform any operations.",
+            "triggerLabel": "Deactivate this user",
+            "dialogTitle": "Deactivate user?",
+            "submit": "Deactivate",
+            "submitting": "Deactivating..."
+          },
+          "activate": {
+            "sectionTitle": "Activate user",
+            "description": "Once activated, this user will be able to log in and perform operations.",
+            "triggerLabel": "Activate this user",
+            "dialogTitle": "Activate user?",
+            "submit": "Activate",
+            "submitting": "Activating..."
+          }
+        }
+      },
+      "rolesTable": {
+        "title": "Roles",
+        "columnName": "Name",
+        "columnDescription": "Description",
+        "columnAssigned": "Assigned",
+        "noRoles": "Assign a role to this user",
+        "revokeDialog": {
+          "title": "Unassign role",
+          "confirmPrefix": "Are you sure you want to unassign the role",
+          "confirmSuffix": "from this user?",
+          "submit": "Unassign",
+          "submitting": "Unassigning..."
+        }
+      },
+      "assignRoleDialog": {
+        "trigger": "Assign role",
+        "title": "Assign role",
+        "searchPlaceholder": "Search role...",
+        "noResults": "No roles found",
+        "submit": "Accept",
+        "submitting": "Assigning...",
+        "error": "Error assigning role."
+      }
+    }
+  }
+}

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "#/components/ui/button";
 import {
   Combobox,
@@ -22,6 +23,7 @@ export function AssignRoleDialog({
   userId,
   assignedRoles,
 }: AssignRoleDialogProps) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [selectedRoleId, setSelectedRoleId] = useState<string | null>(null);
   const [inputValue, setInputValue] = useState("");
@@ -30,14 +32,12 @@ export function AssignRoleDialog({
   const [assignRole, { loading, error }] = useAssignRole();
 
   const assignedIds = new Set(assignedRoles.map((r) => r.id));
-  const availableRoles = (data.roles ?? []).filter(
-    (r) => !assignedIds.has(r.id),
-  );
-
-  const filteredRoles = availableRoles.filter(
-    (role) =>
-      !inputValue || role.name.toLowerCase().includes(inputValue.toLowerCase()),
-  );
+  const filteredRoles = (data.roles ?? [])
+    .filter((r) => !assignedIds.has(r.id))
+    .filter(
+      (r) =>
+        !inputValue || r.name.toLowerCase().includes(inputValue.toLowerCase()),
+    );
 
   const handleAccept = async () => {
     if (!selectedRoleId) return;
@@ -64,10 +64,14 @@ export function AssignRoleDialog({
       open={open}
       onOpenChange={handleOpenChange}
       trigger={<Button variant="outline" />}
-      triggerLabel="Asignar rol"
-      title="Asignar rol"
+      triggerLabel={t("users.assignRoleDialog.trigger")}
+      title={t("users.assignRoleDialog.title")}
       onSubmit={handleAccept}
-      onSubmitLabel={loading ? "Asignando..." : "Aceptar"}
+      onSubmitLabel={
+        loading
+          ? t("users.assignRoleDialog.submitting")
+          : t("users.assignRoleDialog.submit")
+      }
       disable={!selectedRoleId || loading}
     >
       <Combobox
@@ -77,7 +81,9 @@ export function AssignRoleDialog({
         }))}
         onValueChange={({ value }: any) => setSelectedRoleId(value)}
       >
-        <ComboboxInput placeholder="Buscar rol..." />
+        <ComboboxInput
+          placeholder={t("users.assignRoleDialog.searchPlaceholder")}
+        />
         <ComboboxPopup>
           <ComboboxList>
             {(item) => (
@@ -86,12 +92,12 @@ export function AssignRoleDialog({
               </ComboboxItem>
             )}
           </ComboboxList>
-          <ComboboxEmpty>No se encontraron roles</ComboboxEmpty>
+          <ComboboxEmpty>{t("users.assignRoleDialog.noResults")}</ComboboxEmpty>
         </ComboboxPopup>
       </Combobox>
       {error && (
         <p className="mt-2 text-sm text-destructive">
-          {error.message ?? "Error al asignar el rol."}
+          {error.message ?? t("users.assignRoleDialog.error")}
         </p>
       )}
     </AppDialog>

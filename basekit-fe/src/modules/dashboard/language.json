@@ -1,0 +1,18 @@
+{
+  "es": {
+    "dashboard": {
+      "title": "Panel de administración",
+      "subtitle": "Gestiona usuarios, roles y permisos de tu aplicación desde un solo lugar.",
+      "manageUsers": "Gestionar Usuarios",
+      "manageRoles": "Gestionar Roles"
+    }
+  },
+  "en": {
+    "dashboard": {
+      "title": "Administration panel",
+      "subtitle": "Manage your application's users, roles and permissions from one place.",
+      "manageUsers": "Manage Users",
+      "manageRoles": "Manage Roles"
+    }
+  }
+}

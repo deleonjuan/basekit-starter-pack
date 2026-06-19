@@ -1,36 +1,38 @@
 import { useNavigate } from "@tanstack/react-router";
+import { useTranslation } from "react-i18next";
 import { AppPage } from "#/lib/universal-layout/";
 import { FormGenerator, useAppForm, field } from "#/lib/form-generator";
 import type { FormSchemaField } from "#/lib/form-generator";
 import { Button } from "#/components/ui/button";
 import { useCreateUser } from "./queries/createUser.mutation";
 
-const formSchema: FormSchemaField[] = [
-  {
-    title: "Nombre de usuario",
-    fields: [
-      field.textField({
-        name: "username",
-        type: "text",
-        placeholder: "nombre-usuario",
-      }),
-    ],
-  },
-  {
-    title: "Contraseña",
-    fields: [
-      field.textField({
-        name: "password",
-        type: "password",
-        placeholder: "••••••••",
-      }),
-    ],
-  },
-];
-
 export function NewUserPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [createUser, { loading, error }] = useCreateUser();
+
+  const formSchema: FormSchemaField[] = [
+    {
+      title: t("users.newUser.usernameTitle"),
+      fields: [
+        field.textField({
+          name: "username",
+          type: "text",
+          placeholder: t("users.newUser.usernamePlaceholder"),
+        }),
+      ],
+    },
+    {
+      title: t("users.newUser.passwordTitle"),
+      fields: [
+        field.textField({
+          name: "password",
+          type: "password",
+          placeholder: t("users.newUser.passwordPlaceholder"),
+        }),
+      ],
+    },
+  ];
 
   const form = useAppForm({
     defaultValues: { username: "", password: "" },
@@ -44,8 +46,8 @@ export function NewUserPage() {
 
   return (
     <AppPage
-      title="Nuevo Usuario"
-      goBackLink={{ to: "/admin/users", label: "Usuarios" }}
+      title={t("users.newUser.title")}
+      goBackLink={{ to: "/admin/users", label: t("users.newUser.backLabel") }}
     >
       <div className="mt-8">
         <form
@@ -56,16 +58,16 @@ export function NewUserPage() {
           className="flex flex-col gap-6"
         >
           <FormGenerator form={form} formSchema={formSchema} />
-
           {error && (
             <p className="text-sm text-red-500">
-              {error.message ?? "Error al crear el usuario."}
+              {error.message ?? t("users.newUser.error")}
             </p>
           )}
-
           <div className="flex justify-end">
             <Button type="submit" disabled={loading}>
-              {loading ? "Guardando..." : "Crear Usuario"}
+              {loading
+                ? t("users.newUser.submitting")
+                : t("users.newUser.submit")}
             </Button>
           </div>
         </form>

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Checkbox } from "radix-ui";
 import { Check } from "lucide-react";
 import type { ColumnDef } from "@tanstack/react-table";
@@ -22,6 +23,7 @@ export function PermissionsTable({
   refetch,
   page,
 }: PermissionsTableProps) {
+  const { t } = useTranslation();
   const [checkedIds, setCheckedIds] = useState<Set<string>>(
     () => new Set(assignedPermissions.map((p) => p.id)),
   );
@@ -40,11 +42,9 @@ export function PermissionsTable({
   const handleToggle = (permissionId: string) => {
     setCheckedIds((prev) => {
       const next = new Set(prev);
-      if (next.has(permissionId)) {
-        next.delete(permissionId);
-      } else {
-        next.add(permissionId);
-      }
+      next.has(permissionId)
+        ? next.delete(permissionId)
+        : next.add(permissionId);
       return next;
     });
   };
@@ -85,13 +85,10 @@ export function PermissionsTable({
         );
       },
     },
-    {
-      accessorKey: "value",
-      header: "Permiso",
-    },
+    { accessorKey: "value", header: t("roles.permissions.columnPermission") },
     {
       accessorKey: "description",
-      header: "Descripción",
+      header: t("roles.permissions.columnDescription"),
       cell: ({ getValue }) => getValue<string | null>() ?? "—",
     },
   ];
@@ -101,7 +98,9 @@ export function PermissionsTable({
   return (
     <section className="flex flex-col gap-4 pb-8">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold py-2">Permisos</h2>
+        <h2 className="text-lg font-semibold py-2">
+          {t("roles.permissions.title")}
+        </h2>
         {isDirty && (
           <div className="flex gap-2">
             <Button
@@ -110,10 +109,10 @@ export function PermissionsTable({
               onClick={handleCancel}
               disabled={saving}
             >
-              Cancelar
+              {t("common.cancel")}
             </Button>
             <Button type="button" onClick={handleSave} disabled={saving}>
-              {saving ? "Guardando..." : "Guardar"}
+              {saving ? t("common.saving") : t("common.save")}
             </Button>
           </div>
         )}

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "#/components/ui/button";
 import { Textarea } from "#/components/ui/textarea";
 import { FormGenerator, useAppForm, field } from "#/lib/form-generator";
@@ -7,39 +8,41 @@ import { useFieldContext } from "#/lib/form-generator/utils";
 import { AppDialog } from "#/components/common";
 import { useCreateRole } from "../queries/createRole.mutation";
 
-const TextareaField = () => {
+function TextareaField() {
+  const { t } = useTranslation();
   const f = useFieldContext<string>();
   return (
     <Textarea
       id={f.name}
-      placeholder="Descripción del rol"
+      placeholder={t("roles.createDialog.descriptionPlaceholder")}
       value={f.state.value ?? ""}
       onChange={(e) => f.handleChange(e.target.value)}
       onBlur={f.handleBlur}
     />
   );
-};
-
-const formSchema: FormSchemaField[] = [
-  {
-    fields: [
-      field.textField({
-        name: "name",
-        label: "Nombre",
-        placeholder: "Nombre del rol",
-      }),
-      field.customField({
-        name: "description",
-        label: "Descripción",
-        fieldComponent: TextareaField,
-      }),
-    ],
-  },
-];
+}
 
 export function CreateRoleDialog() {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [createRole, { loading, error }] = useCreateRole();
+
+  const formSchema: FormSchemaField[] = [
+    {
+      fields: [
+        field.textField({
+          name: "name",
+          label: t("roles.createDialog.nameLabel"),
+          placeholder: t("roles.createDialog.namePlaceholder"),
+        }),
+        field.customField({
+          name: "description",
+          label: t("roles.createDialog.descriptionLabel"),
+          fieldComponent: TextareaField,
+        }),
+      ],
+    },
+  ];
 
   const form = useAppForm({
     defaultValues: { name: "", description: "" },
@@ -62,10 +65,14 @@ export function CreateRoleDialog() {
       open={open}
       onOpenChange={setOpen}
       trigger={<Button />}
-      triggerLabel="Nuevo"
-      title="Nuevo rol"
+      triggerLabel={t("roles.createDialog.trigger")}
+      title={t("roles.createDialog.title")}
       formId="create-role-form"
-      onSubmitLabel={loading ? "Creando..." : "Crear"}
+      onSubmitLabel={
+        loading
+          ? t("roles.createDialog.creating")
+          : t("roles.createDialog.create")
+      }
       disable={loading}
     >
       <form
@@ -80,7 +87,7 @@ export function CreateRoleDialog() {
         </form.AppForm>
         {error && (
           <p className="mt-2 text-sm text-destructive">
-            {error.message ?? "Error al crear el rol."}
+            {error.message ?? t("roles.createDialog.error")}
           </p>
         )}
       </form>

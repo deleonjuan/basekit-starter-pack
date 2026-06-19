@@ -1,0 +1,78 @@
+{
+  "es": {
+    "roles": {
+      "page": { "title": "Roles" },
+      "table": {
+        "name": "Nombre",
+        "createdAt": "Creado"
+      },
+      "detail": {
+        "title": "Detalle de Rol",
+        "backLabel": "Roles",
+        "loading": "Cargando...",
+        "notFound": "Rol no encontrado.",
+        "createdLabel": "Creado:",
+        "sectionTitle": "Rol",
+        "nameTitle": "Nombre",
+        "namePlaceholder": "nombre-del-rol",
+        "descriptionTitle": "Descripción",
+        "descriptionPlaceholder": "Descripción del rol",
+        "updateError": "Error al actualizar el rol."
+      },
+      "createDialog": {
+        "title": "Nuevo rol",
+        "trigger": "Nuevo",
+        "nameLabel": "Nombre",
+        "namePlaceholder": "Nombre del rol",
+        "descriptionLabel": "Descripción",
+        "descriptionPlaceholder": "Descripción del rol",
+        "create": "Crear",
+        "creating": "Creando...",
+        "error": "Error al crear el rol."
+      },
+      "permissions": {
+        "title": "Permisos",
+        "columnPermission": "Permiso",
+        "columnDescription": "Descripción"
+      }
+    }
+  },
+  "en": {
+    "roles": {
+      "page": { "title": "Roles" },
+      "table": {
+        "name": "Name",
+        "createdAt": "Created"
+      },
+      "detail": {
+        "title": "Role Detail",
+        "backLabel": "Roles",
+        "loading": "Loading...",
+        "notFound": "Role not found.",
+        "createdLabel": "Created:",
+        "sectionTitle": "Role",
+        "nameTitle": "Name",
+        "namePlaceholder": "role-name",
+        "descriptionTitle": "Description",
+        "descriptionPlaceholder": "Role description",
+        "updateError": "Error updating role."
+      },
+      "createDialog": {
+        "title": "New role",
+        "trigger": "New",
+        "nameLabel": "Name",
+        "namePlaceholder": "Role name",
+        "descriptionLabel": "Description",
+        "descriptionPlaceholder": "Role description",
+        "create": "Create",
+        "creating": "Creating...",
+        "error": "Error creating role."
+      },
+      "permissions": {
+        "title": "Permissions",
+        "columnPermission": "Permission",
+        "columnDescription": "Description"
+      }
+    }
+  }
+}

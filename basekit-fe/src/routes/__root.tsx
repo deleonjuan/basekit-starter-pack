@@ -13,6 +13,7 @@ import { NotFoundScreen } from "#/components/screens/NotFoundScreen";
 import { ErrorScreen } from "#/components/screens/ErrorScreen";
 import { ThemeProvider, useTheme } from "#/lib/universal-layout";
 import { ApolloProvider } from "@apollo/client/react";
+import "#/lib/i18n";
 
 interface MyRouterContext extends ApolloClientIntegration.RouterContext {}
 

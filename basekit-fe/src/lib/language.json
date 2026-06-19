@@ -1,0 +1,26 @@
+{
+  "es": {
+    "common": {
+      "save": "Guardar",
+      "saving": "Guardando...",
+      "cancel": "Cancelar",
+      "edit": "Editar",
+      "loading": "Cargando...",
+      "create": "Crear",
+      "creating": "Creando...",
+      "backToHome": "Volver al inicio"
+    }
+  },
+  "en": {
+    "common": {
+      "save": "Save",
+      "saving": "Saving...",
+      "cancel": "Cancel",
+      "edit": "Edit",
+      "loading": "Loading...",
+      "create": "Create",
+      "creating": "Creating...",
+      "backToHome": "Back to home"
+    }
+  }
+}

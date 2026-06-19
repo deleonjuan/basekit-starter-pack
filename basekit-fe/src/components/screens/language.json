@@ -1,0 +1,32 @@
+{
+  "es": {
+    "screens": {
+      "notFound": {
+        "heading": "Página no encontrada",
+        "description": "La página que estás buscando no existe o fue movida.",
+        "backButton": "Volver al inicio"
+      },
+      "error": {
+        "heading": "Algo salió mal",
+        "fallbackMessage": "Ocurrió un error inesperado.",
+        "retry": "Reintentar",
+        "backToHome": "Volver al inicio"
+      }
+    }
+  },
+  "en": {
+    "screens": {
+      "notFound": {
+        "heading": "Page not found",
+        "description": "The page you are looking for does not exist or has been moved.",
+        "backButton": "Back to home"
+      },
+      "error": {
+        "heading": "Something went wrong",
+        "fallbackMessage": "An unexpected error occurred.",
+        "retry": "Retry",
+        "backToHome": "Back to home"
+      }
+    }
+  }
+}
