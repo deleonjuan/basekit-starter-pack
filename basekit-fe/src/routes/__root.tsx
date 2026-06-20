@@ -13,6 +13,7 @@ import { NotFoundScreen } from "#/components/screens/NotFoundScreen";
 import { ErrorScreen } from "#/components/screens/ErrorScreen";
 import { ThemeProvider, useTheme } from "#/lib/universal-layout";
 import { ApolloProvider } from "@apollo/client/react";
+import { TenantInitializer } from "#/modules/tenant/TenantInitializer";
 import "#/lib/i18n";
 
 interface MyRouterContext extends ApolloClientIntegration.RouterContext {}
@@ -57,6 +58,7 @@ function RootComponent({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <ThemeProvider>
       <ApolloProvider client={apolloClient}>
+        <TenantInitializer />
         <RootDocument>{children}</RootDocument>
       </ApolloProvider>
     </ThemeProvider>

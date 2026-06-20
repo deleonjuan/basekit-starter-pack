@@ -22,6 +22,10 @@ export class TenantService {
     return this.tenantRepository.findOneBy({ id, isActive: true });
   }
 
+  findBySlug(slug: string): Promise<Tenant | null> {
+    return this.tenantRepository.findOneBy({ slug, isActive: true });
+  }
+
   async deactivate(id: string): Promise<Tenant> {
     const tenant = await this.tenantRepository.findOneBy({ id });
     if (!tenant) throw new NotFoundException(`Tenant ${id} not found`);

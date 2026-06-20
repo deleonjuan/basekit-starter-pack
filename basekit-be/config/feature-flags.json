@@ -1,0 +1,9 @@
+{
+  "flags": [
+    {
+      "key": "enableFirstUserCreation",
+      "default": true,
+      "description": "Enable the creation of a new user for newly installed apps"
+    }
+  ]
+}

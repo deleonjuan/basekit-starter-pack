@@ -5,10 +5,18 @@ import { PaginationInput } from "../common/dto/pagination.input";
 import { PaginatedTenants } from "./types/paginated-tenants.type";
 import { IPaginatedResult } from "../common/types/paginated-result.type";
 import { SuperAdminOnly } from "../auth/decorators/super-admin.decorator";
+import { CurrentTenant } from "./tenant.decorator";
+import { Public } from "../auth/decorators/public.decorator";
 
 @Resolver(() => Tenant)
 export class TenantResolver {
   constructor(private readonly tenantService: TenantService) {}
+
+  @Public()
+  @Query(() => Tenant, { name: "currentTenant", nullable: true })
+  getCurrentTenant(@CurrentTenant() slug: string): Promise<Tenant | null> {
+    return this.tenantService.findBySlug(slug);
+  }
 
   @Query(() => PaginatedTenants, { name: "tenants" })
   @SuperAdminOnly()

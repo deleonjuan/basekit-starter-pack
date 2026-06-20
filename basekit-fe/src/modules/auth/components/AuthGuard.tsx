@@ -19,9 +19,7 @@ export function AuthGuard({ children }: AuthGuardProps) {
   const applySettings = useSettingsStore((s) => s.applySettings);
   const settingsApplied = useRef(false);
 
-  const { data: settingsData } = useGetPersonalSettings({
-    skip: !user,
-  });
+  const { data: settingsData } = useGetPersonalSettings({ skip: !user });
 
   useEffect(() => {
     if (!settingsData?.personalSettings || settingsApplied.current) return;
@@ -39,7 +37,6 @@ export function AuthGuard({ children }: AuthGuardProps) {
     onFailure: redirectToLogin,
   });
 
-  // On auth error (e.g. expired access token on load): try refresh once before redirecting
   useEffect(() => {
     if (loading || refreshAttemptedRef.current || user) return;
 

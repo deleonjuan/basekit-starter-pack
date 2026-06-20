@@ -6,11 +6,14 @@ type Tenant {
   id: ID!
   slug: String!
   name: String!
-  configuration: String
+  configuration: JSON
   isActive: Boolean!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
+
+"""Arbitrary JSON value"""
+scalar JSON
 
 """
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
@@ -94,10 +97,8 @@ type Setting {
   isDefault: Boolean!
 }
 
-"""Arbitrary JSON value"""
-scalar JSON
-
 type Query {
+  currentTenant: Tenant
   tenants(pagination: PaginationInput): PaginatedTenants!
   users(pagination: PaginationInput, search: String, filters: JSON): PaginatedUsers!
   user(id: ID!): User

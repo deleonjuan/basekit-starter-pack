@@ -26,7 +26,8 @@
     "migration:show": "npm run typeorm -- migration:show",
     "migration:run:tenants": "ts-node --compiler-options '{\"module\":\"CommonJS\"}' scripts/migrate-tenants.ts",
     "tenant:create": "ts-node --compiler-options '{\"module\":\"CommonJS\"}' scripts/create-tenant.ts",
-    "user:create": "ts-node --compiler-options '{\"module\":\"CommonJS\"}' scripts/create-user.ts"
+    "user:create": "ts-node --compiler-options '{\"module\":\"CommonJS\"}' scripts/create-user.ts",
+    "flags:sync": "ts-node --compiler-options '{\"module\":\"CommonJS\"}' scripts/sync-feature-flags.ts"
   },
   "dependencies": {
     "@apollo/server": "^5.5.1",

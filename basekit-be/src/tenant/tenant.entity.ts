@@ -6,6 +6,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
+import { GraphQLJSON } from "../common/scalars/json.scalar";
 
 @ObjectType()
 @Entity("tenants")
@@ -22,7 +23,7 @@ export class Tenant {
   @Column()
   name!: string;
 
-  @Field(() => String, { nullable: true })
+  @Field(() => GraphQLJSON, { nullable: true })
   @Column({ name: "configuration", type: "jsonb", nullable: true })
   configuration!: Record<string, any>;
 
