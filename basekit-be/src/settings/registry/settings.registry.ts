@@ -30,7 +30,7 @@ export const SETTINGS_REGISTRY: SettingDefinition[] = [
     default: false,
     label: "First user has been created",
     description: "Set to true automatically after the first user registers.",
-    permission: "settings.global:write",
+    permission: "",
   },
 
   // ── Personal ─────────────────────────────────────────────────────────────
