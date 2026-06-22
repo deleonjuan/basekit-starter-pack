@@ -23,6 +23,15 @@ export const SETTINGS_REGISTRY: SettingDefinition[] = [
     description: "Display name shown in the UI.",
     permission: "settings.global:write",
   },
+  {
+    key: "app.firstUserCreated",
+    scope: "global",
+    type: "string",
+    default: false,
+    label: "First user created",
+    description: "Sets if a first user was created already or not",
+    permission: "",
+  },
 
   // ── Personal ─────────────────────────────────────────────────────────────
   {

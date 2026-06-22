@@ -2,7 +2,7 @@ import { create } from "zustand";
 
 type FeatureFlagInde = "enableFirstUserCreation";
 
-type FeatureFlags = {
+export type FeatureFlags = {
   enableFirstUserCreation: boolean;
 };
 

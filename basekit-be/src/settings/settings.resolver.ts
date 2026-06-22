@@ -4,14 +4,15 @@ import { SettingType } from "./dto/setting.type";
 import { UpdateSettingInput } from "./dto/update-setting.input";
 import { RequirePermissions } from "../auth/decorators/permissions.decorator";
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
+import { Public } from "../auth/decorators/public.decorator";
 import type { JwtPayload } from "../auth/jwt.strategy";
 
 @Resolver()
 export class SettingsResolver {
   constructor(private readonly settingsService: SettingsService) {}
 
+  @Public()
   @Query(() => [SettingType], { name: "globalSettings" })
-  @RequirePermissions("settings.global:read")
   getGlobalSettings(): Promise<SettingType[]> {
     return this.settingsService.getGlobalSettings();
   }

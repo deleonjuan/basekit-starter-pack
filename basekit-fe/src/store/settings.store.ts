@@ -6,9 +6,13 @@ export type Theme = "light" | "dark" | "system";
 interface SettingsState {
   theme: Theme;
   language: string;
+  globalSettings: Record<string, unknown>;
   setTheme: (theme: Theme) => void;
   setLanguage: (language: string) => void;
   applySettings: (settings: Array<{ key: string; value: unknown }>) => void;
+  applyGlobalSettings: (
+    settings: Array<{ key: string; value: unknown }>,
+  ) => void;
 }
 
 export const useSettingsStore = create<SettingsState>()(
@@ -17,22 +21,22 @@ export const useSettingsStore = create<SettingsState>()(
       (set) => ({
         theme: "light",
         language: "es",
+        globalSettings: {},
         setTheme: (theme) => set({ theme }),
         setLanguage: (language) => set({ language }),
         applySettings: (settings) => {
-          const patch: Partial<Pick<SettingsState, "theme" | "language">> = {};
+          const setPayload: any = {
+            "ui.theme": (theme: Theme) => set({ theme }),
+            "ui.language": (language: string) => set({ language }),
+          };
+          for (const s of settings) setPayload[s.key](s.value);
+        },
+        applyGlobalSettings: (settings) => {
+          const globalSettings: Record<string, unknown> = {};
           for (const s of settings) {
-            if (
-              s.key === "ui.theme" &&
-              (s.value === "light" ||
-                s.value === "dark" ||
-                s.value === "system")
-            )
-              patch.theme = s.value;
-            if (s.key === "ui.language" && typeof s.value === "string")
-              patch.language = s.value;
+            globalSettings[s.key] = s.value;
           }
-          if (Object.keys(patch).length > 0) set(patch);
+          set({ globalSettings });
         },
       }),
       { name: "basekit-settings" },
