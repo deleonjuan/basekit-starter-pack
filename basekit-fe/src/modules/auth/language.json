@@ -11,6 +11,17 @@
         "submit": "Iniciar sesión",
         "submitting": "Iniciando sesión…",
         "error": "Credenciales inválidas."
+      },
+      "signup": {
+        "title": "Crear cuenta de administrador",
+        "subtitle": "Configura el primer usuario para comenzar.",
+        "username": "Usuario",
+        "usernamePlaceholder": "tu-usuario",
+        "password": "Contraseña",
+        "passwordPlaceholder": "••••••••",
+        "submit": "Crear cuenta",
+        "submitting": "Creando…",
+        "error": "Error al crear la cuenta."
       }
     }
   },
@@ -26,6 +37,17 @@
         "submit": "Sign in",
         "submitting": "Signing in…",
         "error": "Invalid credentials."
+      },
+      "signup": {
+        "title": "Create admin account",
+        "subtitle": "Set up the first user to get started.",
+        "username": "Username",
+        "usernamePlaceholder": "your-username",
+        "password": "Password",
+        "passwordPlaceholder": "••••••••",
+        "submit": "Create account",
+        "submitting": "Creating…",
+        "error": "Error creating account."
       }
     }
   }

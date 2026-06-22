@@ -56,6 +56,34 @@ export class UserService {
     return this.repo.save(user);
   }
 
+  async registerFirstUser(input: CreateUserInput): Promise<User> {
+    const count = await this.repo.countBy({ isSuperAdmin: false });
+    if (count > 0) {
+      throw new Error("A user already exists. Registration is closed.");
+    }
+
+    const hashed = await bcrypt.hash(input.password, 12);
+    const user = this.repo.create({ ...input, password: hashed });
+    const saved = await this.repo.save(user);
+
+    const adminRole = await this.ds
+      .getRepository(Role)
+      .findOneBy({ name: "admin" });
+    if (adminRole) {
+      saved.roles = [adminRole];
+      await this.repo.save(saved);
+    }
+
+    await this.ds.query(
+      `INSERT INTO settings (id, key, value, scope, user_id, created_at, updated_at)
+       VALUES (gen_random_uuid(), 'app.firstUserCreated', 'true'::jsonb, 'global', NULL, NOW(), NOW())
+       ON CONFLICT (key) WHERE scope = 'global'
+       DO UPDATE SET value = 'true'::jsonb, updated_at = NOW()`,
+    );
+
+    return saved;
+  }
+
   async update(id: string, input: UpdateUserInput): Promise<User> {
     const user = await this.findOne(id);
     if (input.password) {

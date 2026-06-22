@@ -8,249 +8,269 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from "./routes/__root";
-import { Route as LogoutRouteImport } from "./routes/logout";
-import { Route as LoginRouteImport } from "./routes/login";
-import { Route as AdminRouteImport } from "./routes/_admin";
-import { Route as IndexRouteImport } from "./routes/index";
-import { Route as AdminAdminIndexRouteImport } from "./routes/_admin/admin/index";
-import { Route as AdminAdminUsersIndexRouteImport } from "./routes/_admin/admin/users/index";
-import { Route as AdminAdminSettingsIndexRouteImport } from "./routes/_admin/admin/settings/index";
-import { Route as AdminAdminRolesIndexRouteImport } from "./routes/_admin/admin/roles/index";
-import { Route as AdminAdminUsersNewRouteImport } from "./routes/_admin/admin/users/new";
-import { Route as AdminAdminUsersUserIdRouteImport } from "./routes/_admin/admin/users/$userId";
-import { Route as AdminAdminRolesRoleIdRouteImport } from "./routes/_admin/admin/roles/$roleId";
+import { Route as rootRouteImport } from './routes/__root'
+import { Route as SignupRouteImport } from './routes/signup'
+import { Route as LogoutRouteImport } from './routes/logout'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as AdminRouteImport } from './routes/_admin'
+import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminAdminIndexRouteImport } from './routes/_admin/admin/index'
+import { Route as AdminAdminUsersIndexRouteImport } from './routes/_admin/admin/users/index'
+import { Route as AdminAdminSettingsIndexRouteImport } from './routes/_admin/admin/settings/index'
+import { Route as AdminAdminRolesIndexRouteImport } from './routes/_admin/admin/roles/index'
+import { Route as AdminAdminUsersNewRouteImport } from './routes/_admin/admin/users/new'
+import { Route as AdminAdminUsersUserIdRouteImport } from './routes/_admin/admin/users/$userId'
+import { Route as AdminAdminRolesRoleIdRouteImport } from './routes/_admin/admin/roles/$roleId'
 
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LogoutRoute = LogoutRouteImport.update({
-  id: "/logout",
-  path: "/logout",
+  id: '/logout',
+  path: '/logout',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const LoginRoute = LoginRouteImport.update({
-  id: "/login",
-  path: "/login",
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const AdminRoute = AdminRouteImport.update({
-  id: "/_admin",
+  id: '/_admin',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const IndexRoute = IndexRouteImport.update({
-  id: "/",
-  path: "/",
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const AdminAdminIndexRoute = AdminAdminIndexRouteImport.update({
-  id: "/admin/",
-  path: "/admin/",
+  id: '/admin/',
+  path: '/admin/',
   getParentRoute: () => AdminRoute,
-} as any);
+} as any)
 const AdminAdminUsersIndexRoute = AdminAdminUsersIndexRouteImport.update({
-  id: "/admin/users/",
-  path: "/admin/users/",
+  id: '/admin/users/',
+  path: '/admin/users/',
   getParentRoute: () => AdminRoute,
-} as any);
+} as any)
 const AdminAdminSettingsIndexRoute = AdminAdminSettingsIndexRouteImport.update({
-  id: "/admin/settings/",
-  path: "/admin/settings/",
+  id: '/admin/settings/',
+  path: '/admin/settings/',
   getParentRoute: () => AdminRoute,
-} as any);
+} as any)
 const AdminAdminRolesIndexRoute = AdminAdminRolesIndexRouteImport.update({
-  id: "/admin/roles/",
-  path: "/admin/roles/",
+  id: '/admin/roles/',
+  path: '/admin/roles/',
   getParentRoute: () => AdminRoute,
-} as any);
+} as any)
 const AdminAdminUsersNewRoute = AdminAdminUsersNewRouteImport.update({
-  id: "/admin/users/new",
-  path: "/admin/users/new",
+  id: '/admin/users/new',
+  path: '/admin/users/new',
   getParentRoute: () => AdminRoute,
-} as any);
+} as any)
 const AdminAdminUsersUserIdRoute = AdminAdminUsersUserIdRouteImport.update({
-  id: "/admin/users/$userId",
-  path: "/admin/users/$userId",
+  id: '/admin/users/$userId',
+  path: '/admin/users/$userId',
   getParentRoute: () => AdminRoute,
-} as any);
+} as any)
 const AdminAdminRolesRoleIdRoute = AdminAdminRolesRoleIdRouteImport.update({
-  id: "/admin/roles/$roleId",
-  path: "/admin/roles/$roleId",
+  id: '/admin/roles/$roleId',
+  path: '/admin/roles/$roleId',
   getParentRoute: () => AdminRoute,
-} as any);
+} as any)
 
 export interface FileRoutesByFullPath {
-  "/": typeof IndexRoute;
-  "/login": typeof LoginRoute;
-  "/logout": typeof LogoutRoute;
-  "/admin/": typeof AdminAdminIndexRoute;
-  "/admin/roles/$roleId": typeof AdminAdminRolesRoleIdRoute;
-  "/admin/users/$userId": typeof AdminAdminUsersUserIdRoute;
-  "/admin/users/new": typeof AdminAdminUsersNewRoute;
-  "/admin/roles/": typeof AdminAdminRolesIndexRoute;
-  "/admin/settings/": typeof AdminAdminSettingsIndexRoute;
-  "/admin/users/": typeof AdminAdminUsersIndexRoute;
+  '/': typeof IndexRoute
+  '/login': typeof LoginRoute
+  '/logout': typeof LogoutRoute
+  '/signup': typeof SignupRoute
+  '/admin/': typeof AdminAdminIndexRoute
+  '/admin/roles/$roleId': typeof AdminAdminRolesRoleIdRoute
+  '/admin/users/$userId': typeof AdminAdminUsersUserIdRoute
+  '/admin/users/new': typeof AdminAdminUsersNewRoute
+  '/admin/roles/': typeof AdminAdminRolesIndexRoute
+  '/admin/settings/': typeof AdminAdminSettingsIndexRoute
+  '/admin/users/': typeof AdminAdminUsersIndexRoute
 }
 export interface FileRoutesByTo {
-  "/": typeof IndexRoute;
-  "/login": typeof LoginRoute;
-  "/logout": typeof LogoutRoute;
-  "/admin": typeof AdminAdminIndexRoute;
-  "/admin/roles/$roleId": typeof AdminAdminRolesRoleIdRoute;
-  "/admin/users/$userId": typeof AdminAdminUsersUserIdRoute;
-  "/admin/users/new": typeof AdminAdminUsersNewRoute;
-  "/admin/roles": typeof AdminAdminRolesIndexRoute;
-  "/admin/settings": typeof AdminAdminSettingsIndexRoute;
-  "/admin/users": typeof AdminAdminUsersIndexRoute;
+  '/': typeof IndexRoute
+  '/login': typeof LoginRoute
+  '/logout': typeof LogoutRoute
+  '/signup': typeof SignupRoute
+  '/admin': typeof AdminAdminIndexRoute
+  '/admin/roles/$roleId': typeof AdminAdminRolesRoleIdRoute
+  '/admin/users/$userId': typeof AdminAdminUsersUserIdRoute
+  '/admin/users/new': typeof AdminAdminUsersNewRoute
+  '/admin/roles': typeof AdminAdminRolesIndexRoute
+  '/admin/settings': typeof AdminAdminSettingsIndexRoute
+  '/admin/users': typeof AdminAdminUsersIndexRoute
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport;
-  "/": typeof IndexRoute;
-  "/_admin": typeof AdminRouteWithChildren;
-  "/login": typeof LoginRoute;
-  "/logout": typeof LogoutRoute;
-  "/_admin/admin/": typeof AdminAdminIndexRoute;
-  "/_admin/admin/roles/$roleId": typeof AdminAdminRolesRoleIdRoute;
-  "/_admin/admin/users/$userId": typeof AdminAdminUsersUserIdRoute;
-  "/_admin/admin/users/new": typeof AdminAdminUsersNewRoute;
-  "/_admin/admin/roles/": typeof AdminAdminRolesIndexRoute;
-  "/_admin/admin/settings/": typeof AdminAdminSettingsIndexRoute;
-  "/_admin/admin/users/": typeof AdminAdminUsersIndexRoute;
+  __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
+  '/_admin': typeof AdminRouteWithChildren
+  '/login': typeof LoginRoute
+  '/logout': typeof LogoutRoute
+  '/signup': typeof SignupRoute
+  '/_admin/admin/': typeof AdminAdminIndexRoute
+  '/_admin/admin/roles/$roleId': typeof AdminAdminRolesRoleIdRoute
+  '/_admin/admin/users/$userId': typeof AdminAdminUsersUserIdRoute
+  '/_admin/admin/users/new': typeof AdminAdminUsersNewRoute
+  '/_admin/admin/roles/': typeof AdminAdminRolesIndexRoute
+  '/_admin/admin/settings/': typeof AdminAdminSettingsIndexRoute
+  '/_admin/admin/users/': typeof AdminAdminUsersIndexRoute
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath;
+  fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | "/"
-    | "/login"
-    | "/logout"
-    | "/admin/"
-    | "/admin/roles/$roleId"
-    | "/admin/users/$userId"
-    | "/admin/users/new"
-    | "/admin/roles/"
-    | "/admin/settings/"
-    | "/admin/users/";
-  fileRoutesByTo: FileRoutesByTo;
+    | '/'
+    | '/login'
+    | '/logout'
+    | '/signup'
+    | '/admin/'
+    | '/admin/roles/$roleId'
+    | '/admin/users/$userId'
+    | '/admin/users/new'
+    | '/admin/roles/'
+    | '/admin/settings/'
+    | '/admin/users/'
+  fileRoutesByTo: FileRoutesByTo
   to:
-    | "/"
-    | "/login"
-    | "/logout"
-    | "/admin"
-    | "/admin/roles/$roleId"
-    | "/admin/users/$userId"
-    | "/admin/users/new"
-    | "/admin/roles"
-    | "/admin/settings"
-    | "/admin/users";
+    | '/'
+    | '/login'
+    | '/logout'
+    | '/signup'
+    | '/admin'
+    | '/admin/roles/$roleId'
+    | '/admin/users/$userId'
+    | '/admin/users/new'
+    | '/admin/roles'
+    | '/admin/settings'
+    | '/admin/users'
   id:
-    | "__root__"
-    | "/"
-    | "/_admin"
-    | "/login"
-    | "/logout"
-    | "/_admin/admin/"
-    | "/_admin/admin/roles/$roleId"
-    | "/_admin/admin/users/$userId"
-    | "/_admin/admin/users/new"
-    | "/_admin/admin/roles/"
-    | "/_admin/admin/settings/"
-    | "/_admin/admin/users/";
-  fileRoutesById: FileRoutesById;
+    | '__root__'
+    | '/'
+    | '/_admin'
+    | '/login'
+    | '/logout'
+    | '/signup'
+    | '/_admin/admin/'
+    | '/_admin/admin/roles/$roleId'
+    | '/_admin/admin/users/$userId'
+    | '/_admin/admin/users/new'
+    | '/_admin/admin/roles/'
+    | '/_admin/admin/settings/'
+    | '/_admin/admin/users/'
+  fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute;
-  AdminRoute: typeof AdminRouteWithChildren;
-  LoginRoute: typeof LoginRoute;
-  LogoutRoute: typeof LogoutRoute;
+  IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRouteWithChildren
+  LoginRoute: typeof LoginRoute
+  LogoutRoute: typeof LogoutRoute
+  SignupRoute: typeof SignupRoute
 }
 
-declare module "@tanstack/react-router" {
+declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    "/logout": {
-      id: "/logout";
-      path: "/logout";
-      fullPath: "/logout";
-      preLoaderRoute: typeof LogoutRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/login": {
-      id: "/login";
-      path: "/login";
-      fullPath: "/login";
-      preLoaderRoute: typeof LoginRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/_admin": {
-      id: "/_admin";
-      path: "";
-      fullPath: "/";
-      preLoaderRoute: typeof AdminRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/": {
-      id: "/";
-      path: "/";
-      fullPath: "/";
-      preLoaderRoute: typeof IndexRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/_admin/admin/": {
-      id: "/_admin/admin/";
-      path: "/admin";
-      fullPath: "/admin/";
-      preLoaderRoute: typeof AdminAdminIndexRouteImport;
-      parentRoute: typeof AdminRoute;
-    };
-    "/_admin/admin/users/": {
-      id: "/_admin/admin/users/";
-      path: "/admin/users";
-      fullPath: "/admin/users/";
-      preLoaderRoute: typeof AdminAdminUsersIndexRouteImport;
-      parentRoute: typeof AdminRoute;
-    };
-    "/_admin/admin/settings/": {
-      id: "/_admin/admin/settings/";
-      path: "/admin/settings";
-      fullPath: "/admin/settings/";
-      preLoaderRoute: typeof AdminAdminSettingsIndexRouteImport;
-      parentRoute: typeof AdminRoute;
-    };
-    "/_admin/admin/roles/": {
-      id: "/_admin/admin/roles/";
-      path: "/admin/roles";
-      fullPath: "/admin/roles/";
-      preLoaderRoute: typeof AdminAdminRolesIndexRouteImport;
-      parentRoute: typeof AdminRoute;
-    };
-    "/_admin/admin/users/new": {
-      id: "/_admin/admin/users/new";
-      path: "/admin/users/new";
-      fullPath: "/admin/users/new";
-      preLoaderRoute: typeof AdminAdminUsersNewRouteImport;
-      parentRoute: typeof AdminRoute;
-    };
-    "/_admin/admin/users/$userId": {
-      id: "/_admin/admin/users/$userId";
-      path: "/admin/users/$userId";
-      fullPath: "/admin/users/$userId";
-      preLoaderRoute: typeof AdminAdminUsersUserIdRouteImport;
-      parentRoute: typeof AdminRoute;
-    };
-    "/_admin/admin/roles/$roleId": {
-      id: "/_admin/admin/roles/$roleId";
-      path: "/admin/roles/$roleId";
-      fullPath: "/admin/roles/$roleId";
-      preLoaderRoute: typeof AdminAdminRolesRoleIdRouteImport;
-      parentRoute: typeof AdminRoute;
-    };
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/logout': {
+      id: '/logout'
+      path: '/logout'
+      fullPath: '/logout'
+      preLoaderRoute: typeof LogoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_admin': {
+      id: '/_admin'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_admin/admin/': {
+      id: '/_admin/admin/'
+      path: '/admin'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminAdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/_admin/admin/users/': {
+      id: '/_admin/admin/users/'
+      path: '/admin/users'
+      fullPath: '/admin/users/'
+      preLoaderRoute: typeof AdminAdminUsersIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/_admin/admin/settings/': {
+      id: '/_admin/admin/settings/'
+      path: '/admin/settings'
+      fullPath: '/admin/settings/'
+      preLoaderRoute: typeof AdminAdminSettingsIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/_admin/admin/roles/': {
+      id: '/_admin/admin/roles/'
+      path: '/admin/roles'
+      fullPath: '/admin/roles/'
+      preLoaderRoute: typeof AdminAdminRolesIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/_admin/admin/users/new': {
+      id: '/_admin/admin/users/new'
+      path: '/admin/users/new'
+      fullPath: '/admin/users/new'
+      preLoaderRoute: typeof AdminAdminUsersNewRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/_admin/admin/users/$userId': {
+      id: '/_admin/admin/users/$userId'
+      path: '/admin/users/$userId'
+      fullPath: '/admin/users/$userId'
+      preLoaderRoute: typeof AdminAdminUsersUserIdRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/_admin/admin/roles/$roleId': {
+      id: '/_admin/admin/roles/$roleId'
+      path: '/admin/roles/$roleId'
+      fullPath: '/admin/roles/$roleId'
+      preLoaderRoute: typeof AdminAdminRolesRoleIdRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
 
 interface AdminRouteChildren {
-  AdminAdminIndexRoute: typeof AdminAdminIndexRoute;
-  AdminAdminRolesRoleIdRoute: typeof AdminAdminRolesRoleIdRoute;
-  AdminAdminUsersUserIdRoute: typeof AdminAdminUsersUserIdRoute;
-  AdminAdminUsersNewRoute: typeof AdminAdminUsersNewRoute;
-  AdminAdminRolesIndexRoute: typeof AdminAdminRolesIndexRoute;
-  AdminAdminSettingsIndexRoute: typeof AdminAdminSettingsIndexRoute;
-  AdminAdminUsersIndexRoute: typeof AdminAdminUsersIndexRoute;
+  AdminAdminIndexRoute: typeof AdminAdminIndexRoute
+  AdminAdminRolesRoleIdRoute: typeof AdminAdminRolesRoleIdRoute
+  AdminAdminUsersUserIdRoute: typeof AdminAdminUsersUserIdRoute
+  AdminAdminUsersNewRoute: typeof AdminAdminUsersNewRoute
+  AdminAdminRolesIndexRoute: typeof AdminAdminRolesIndexRoute
+  AdminAdminSettingsIndexRoute: typeof AdminAdminSettingsIndexRoute
+  AdminAdminUsersIndexRoute: typeof AdminAdminUsersIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
@@ -261,25 +281,26 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminAdminRolesIndexRoute: AdminAdminRolesIndexRoute,
   AdminAdminSettingsIndexRoute: AdminAdminSettingsIndexRoute,
   AdminAdminUsersIndexRoute: AdminAdminUsersIndexRoute,
-};
+}
 
-const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren);
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRouteWithChildren,
   LoginRoute: LoginRoute,
   LogoutRoute: LogoutRoute,
-};
+  SignupRoute: SignupRoute,
+}
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>();
+  ._addFileTypes<FileRouteTypes>()
 
-import type { getRouter } from "./router.tsx";
-import type { createStart } from "@tanstack/react-start";
-declare module "@tanstack/react-start" {
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
   interface Register {
-    ssr: true;
-    router: Awaited<ReturnType<typeof getRouter>>;
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
   }
 }

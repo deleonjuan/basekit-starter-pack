@@ -5,6 +5,8 @@ import {
 } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { TanStackDevtools } from "@tanstack/react-devtools";
+import { useEffect } from "react";
+import { useNavigate, useRouterState } from "@tanstack/react-router";
 
 import appCss from "../styles.css?url";
 
@@ -13,36 +15,24 @@ import { NotFoundScreen } from "#/components/screens/NotFoundScreen";
 import { ErrorScreen } from "#/components/screens/ErrorScreen";
 import { ThemeProvider, useTheme } from "#/lib/universal-layout";
 import { ApolloProvider } from "@apollo/client/react";
-import { TenantInitializer } from "#/modules/tenant/TenantInitializer";
+import { AppDataLoader } from "#/modules/tenant/TenantInitializer";
+import { useSettingsStore } from "#/store/settings.store";
+import { useTenantStore } from "#/store/tenant.store";
 import "#/lib/i18n";
+import NavigationController from "#/modules/auth/components/NavigationController";
 
 interface MyRouterContext extends ApolloClientIntegration.RouterContext {}
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
   head: () => ({
     meta: [
-      {
-        charSet: "utf-8",
-      },
-      {
-        name: "viewport",
-        content: "width=device-width, initial-scale=1",
-      },
-      {
-        title: "Basekit Starter",
-      },
+      { charSet: "utf-8" },
+      { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { title: "Basekit Starter" },
     ],
     links: [
-      {
-        rel: "stylesheet",
-        href: appCss,
-      },
-      {
-        rel: "icon",
-        type: "image/png",
-        sizes: "32x32",
-        href: "/favicon.png",
-      },
+      { rel: "stylesheet", href: appCss },
+      { rel: "icon", type: "image/png", sizes: "32x32", href: "/favicon.png" },
       { rel: "manifest", href: "/site.webmanifest", color: "#fffff" },
       { rel: "icon", href: "/favicon.ico" },
     ],
@@ -58,8 +48,11 @@ function RootComponent({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <ThemeProvider>
       <ApolloProvider client={apolloClient}>
-        <TenantInitializer />
-        <RootDocument>{children}</RootDocument>
+        <RootDocument>
+          <AppDataLoader>
+            <NavigationController>{children}</NavigationController>
+          </AppDataLoader>
+        </RootDocument>
       </ApolloProvider>
     </ThemeProvider>
   );

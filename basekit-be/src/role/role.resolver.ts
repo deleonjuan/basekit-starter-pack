@@ -17,7 +17,7 @@ export class RoleResolver {
   constructor(private readonly roleService: RoleService) {}
 
   @Query(() => PaginatedRoles, { name: "roles" })
-  @RequirePermissions("read:role")
+  @RequirePermissions("roles:read")
   findAll(
     @Args("pagination", { nullable: true }) pagination?: PaginationInput,
     @Args("search", { nullable: true }) search?: string,
@@ -28,19 +28,19 @@ export class RoleResolver {
   }
 
   @Query(() => Role, { name: "role" })
-  @RequirePermissions("read:role")
+  @RequirePermissions("roles:read")
   findOne(@Args("id", { type: () => ID }) id: string): Promise<Role> {
     return this.roleService.findOne(id);
   }
 
   @Mutation(() => Role, { name: "createRole" })
-  @RequirePermissions("create:role")
+  @RequirePermissions("roles:write")
   create(@Args("input") input: CreateRoleInput): Promise<Role> {
     return this.roleService.create(input);
   }
 
   @Mutation(() => Role, { name: "updateRole" })
-  @RequirePermissions("update:role")
+  @RequirePermissions("roles:write")
   update(
     @Args("id", { type: () => ID }) id: string,
     @Args("input") input: UpdateRoleInput,
@@ -49,13 +49,13 @@ export class RoleResolver {
   }
 
   @Mutation(() => Boolean, { name: "deleteRole" })
-  @RequirePermissions("delete:role")
+  @RequirePermissions("roles:delete")
   delete(@Args("id", { type: () => ID }) id: string): Promise<boolean> {
     return this.roleService.delete(id);
   }
 
   @Mutation(() => Role, { name: "assignPermission" })
-  @RequirePermissions("update:role")
+  @RequirePermissions("roles.permissions:write")
   assignPermission(
     @Args("roleId", { type: () => ID }) roleId: string,
     @Args("permissionId", { type: () => ID }) permissionId: string,
@@ -64,7 +64,7 @@ export class RoleResolver {
   }
 
   @Mutation(() => Role, { name: "revokePermission" })
-  @RequirePermissions("update:role")
+  @RequirePermissions("roles.permissions:write")
   revokePermission(
     @Args("roleId", { type: () => ID }) roleId: string,
     @Args("permissionId", { type: () => ID }) permissionId: string,
@@ -73,7 +73,7 @@ export class RoleResolver {
   }
 
   @Mutation(() => Role, { name: "syncPermissions" })
-  @RequirePermissions("update:role")
+  @RequirePermissions("roles.permissions:write")
   syncPermissions(
     @Args("roleId", { type: () => ID }) roleId: string,
     @Args("assign", { type: () => [ID] }) assign: string[],
@@ -83,7 +83,7 @@ export class RoleResolver {
   }
 
   @Query(() => PaginatedPermissions, { name: "permissions" })
-  @RequirePermissions("read:permission")
+  @RequirePermissions("permissions:read")
   findAllPermissions(
     @Args("pagination", { nullable: true }) pagination?: PaginationInput,
     @Args("search", { nullable: true }) search?: string,
@@ -99,7 +99,7 @@ export class RoleResolver {
   }
 
   @Mutation(() => Permission, { name: "createPermission" })
-  @RequirePermissions("create:permission")
+  @RequirePermissions("permissions:write")
   createPermission(
     @Args("value") value: string,
     @Args("description", { nullable: true }) description?: string,

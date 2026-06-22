@@ -28,9 +28,9 @@ export const SETTINGS_REGISTRY: SettingDefinition[] = [
     scope: "global",
     type: "string",
     default: false,
-    label: "First user created",
-    description: "Sets if a first user was created already or not",
-    permission: "",
+    label: "First user has been created",
+    description: "Set to true automatically after the first user registers.",
+    permission: "settings.global:write",
   },
 
   // ── Personal ─────────────────────────────────────────────────────────────

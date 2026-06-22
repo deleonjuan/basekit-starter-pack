@@ -8,16 +8,35 @@ import { PaginatedUsers } from "./types/paginated-users.type";
 import { IPaginatedResult } from "../common/types/paginated-result.type";
 import { RequirePermissions } from "../auth/decorators/permissions.decorator";
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
+import { Public } from "../auth/decorators/public.decorator";
+import { CurrentTenant } from "../tenant/tenant.decorator";
+import { TenantService } from "../tenant/tenant.service";
 import type { JwtPayload } from "../auth/jwt.strategy";
 import { GraphQLJSON } from "../common/scalars/json.scalar";
 import type { FilterMap } from "../common/utils/find-many.util";
 
 @Resolver(() => User)
 export class UserResolver {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly tenantService: TenantService,
+  ) {}
+
+  @Public()
+  @Mutation(() => User, { name: "registerFirstUser" })
+  async registerFirstUser(
+    @CurrentTenant() slug: string,
+    @Args("input") input: CreateUserInput,
+  ): Promise<User> {
+    const tenant = await this.tenantService.findBySlug(slug);
+    const enabled =
+      tenant?.configuration?.featureFlags?.["enableFirstUserCreation"];
+    if (!enabled) throw new Error("First user registration is not enabled.");
+    return this.userService.registerFirstUser(input);
+  }
 
   @Query(() => PaginatedUsers, { name: "users" })
-  @RequirePermissions("read:user")
+  @RequirePermissions("users:read")
   findAll(
     @Args("pagination", { nullable: true }) pagination?: PaginationInput,
     @Args("search", { nullable: true }) search?: string,
@@ -38,13 +57,13 @@ export class UserResolver {
   }
 
   @Mutation(() => User, { name: "createUser" })
-  @RequirePermissions("create:user")
+  @RequirePermissions("users:write")
   create(@Args("input") input: CreateUserInput): Promise<User> {
     return this.userService.create(input);
   }
 
   @Mutation(() => User, { name: "updateUser" })
-  @RequirePermissions("update:user")
+  @RequirePermissions("users:write")
   update(
     @Args("id", { type: () => ID }) id: string,
     @Args("input") input: UpdateUserInput,
@@ -53,13 +72,13 @@ export class UserResolver {
   }
 
   @Mutation(() => Boolean, { name: "deleteUser" })
-  @RequirePermissions("delete:user")
+  @RequirePermissions("users:delete")
   delete(@Args("id", { type: () => ID }) id: string): Promise<boolean> {
     return this.userService.delete(id);
   }
 
   @Mutation(() => User, { name: "assignRole" })
-  @RequirePermissions("update:user")
+  @RequirePermissions("users.roles:write")
   assignRole(
     @Args("userId", { type: () => ID }) userId: string,
     @Args("roleId", { type: () => ID }) roleId: string,
@@ -68,7 +87,7 @@ export class UserResolver {
   }
 
   @Mutation(() => User, { name: "revokeRole" })
-  @RequirePermissions("update:user")
+  @RequirePermissions("users.roles:write")
   revokeRole(
     @Args("userId", { type: () => ID }) userId: string,
     @Args("roleId", { type: () => ID }) roleId: string,
