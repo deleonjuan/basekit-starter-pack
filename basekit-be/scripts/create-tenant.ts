@@ -1,3 +1,18 @@
+/**
+ * Creates a new tenant in the master database.
+ *
+ * When multitenancy is enabled, also provisions a dedicated database
+ * (`tenant_<slug>`) and runs all migrations against it.
+ *
+ * @usage
+ *   pnpm tenant:create --slug <slug> --name <name>
+ *
+ * @example
+ *   pnpm tenant:create --slug acme --name "Acme Corp"
+ *
+ * @param --slug  URL-safe identifier for the tenant (must be unique)
+ * @param --name  Human-readable display name for the tenant
+ */
 import { DataSource, DataSourceOptions } from "typeorm";
 import {
   baseDataSourceOptions,

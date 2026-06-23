@@ -1,3 +1,17 @@
+/**
+ * Runs pending TypeORM migrations against every active tenant database.
+ *
+ * Queries the master database for all active tenants and runs
+ * `dataSource.runMigrations()` against each corresponding `tenant_<slug>`
+ * database in sequence. Safe to run multiple times — already-applied
+ * migrations are skipped automatically.
+ *
+ * @usage
+ *   pnpm tenants:migrate
+ *
+ * @example
+ *   pnpm tenants:migrate
+ */
 import { DataSource, DataSourceOptions } from "typeorm";
 import {
   baseDataSourceOptions,

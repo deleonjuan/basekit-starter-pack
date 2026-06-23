@@ -1,3 +1,25 @@
+/**
+ * Creates a new user (regular or super admin) in the appropriate database.
+ *
+ * - Super admins are always written to the master database regardless of
+ *   multitenancy mode.
+ * - With multitenancy disabled, regular users are written to the master DB.
+ * - With multitenancy enabled, regular users are written to the tenant DB
+ *   (`tenant_<slug>`); --tenant is required in this case.
+ *
+ * @usage
+ *   pnpm user:create --username <name> --password <pass> [--super-admin] [--tenant <slug>]
+ *
+ * @example
+ *   pnpm user:create --username alice --password secret123
+ *   pnpm user:create --username alice --password secret123 --tenant acme
+ *   pnpm user:create --username admin --password secret123 --super-admin
+ *
+ * @param --username     Login name for the new user
+ * @param --password     Plain-text password (hashed with bcrypt before storing)
+ * @param --super-admin  Flag: creates the user as a super admin (no tenant required)
+ * @param --tenant       Tenant slug; required for regular users when multitenancy is enabled
+ */
 import { DataSource, DataSourceOptions } from "typeorm";
 import * as bcrypt from "bcrypt";
 import {

@@ -1,4 +1,22 @@
 /* eslint-disable */
+/**
+ * Syncs feature flags from `config/feature-flags.json` to every tenant record
+ * in the master database.
+ *
+ * For each tenant:
+ *   - Adds any new flags (using the default value from the registry).
+ *   - Removes flags that no longer exist in the registry.
+ *   - Preserves existing per-tenant overrides for flags still in the registry.
+ *
+ * Safe to run multiple times — already-synced tenants are updated in place
+ * without losing their custom flag values.
+ *
+ * @usage
+ *   pnpm flags:sync
+ *
+ * @example
+ *   pnpm flags:sync
+ */
 import { DataSource } from "typeorm";
 import { masterDataSourceOptions } from "../database/datasource";
 import { Tenant } from "../src/tenant/tenant.entity";
