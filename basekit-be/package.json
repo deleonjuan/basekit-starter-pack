@@ -82,7 +82,9 @@
   "pnpm": {
     "onlyBuiltDependencies": [
       "@apollo/protobufjs",
-      "bcrypt"
+      "@nestjs/core",
+      "bcrypt",
+      "unrs-resolver"
     ]
   },
   "jest": {
