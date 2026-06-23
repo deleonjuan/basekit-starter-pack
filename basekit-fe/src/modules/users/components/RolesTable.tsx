@@ -2,12 +2,13 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { ColumnDef } from "@tanstack/react-table";
 import { SimpleDataTable } from "#/components/common/DataTable";
-import { CustomDate, AppDialog } from "#/components/common";
+import { CustomDate, AppDialog, Permissions } from "#/components/common";
 import { Button } from "#/components/ui/button";
 import { Trash2Icon } from "lucide-react";
 import type { UserRole } from "../queries/getUser.query";
 import { AssignRoleDialog } from "./AssignRoleDialog";
 import { useRevokeRole } from "../queries/revokeRole.mutation";
+import { PERMISSIONS } from "#/lib/permissions";
 
 function RevokeRoleButton({
   userId,
@@ -86,7 +87,9 @@ export default function RolesTable({
       id: "actions",
       cell: ({ row }) => (
         <div className="flex justify-end">
-          <RevokeRoleButton userId={userId} role={row.original} />
+          <Permissions required={[PERMISSIONS.USERS.ROLES_WRITE]}>
+            <RevokeRoleButton userId={userId} role={row.original} />
+          </Permissions>
         </div>
       ),
     },
@@ -96,7 +99,9 @@ export default function RolesTable({
     <section className="flex flex-col gap-4 pb-8">
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold">{t("users.rolesTable.title")}</h2>
-        <AssignRoleDialog userId={userId} assignedRoles={roles} />
+        <Permissions required={[PERMISSIONS.USERS.ROLES_WRITE]}>
+          <AssignRoleDialog userId={userId} assignedRoles={roles} />
+        </Permissions>
       </div>
       <SimpleDataTable
         columns={columns}

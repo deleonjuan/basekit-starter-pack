@@ -2,13 +2,19 @@ import { useNavigate, useSearch } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { AppPage } from "#/lib/universal-layout/";
 import DataTable, { type IPagination } from "#/components/common/DataTable";
-import { CustomDate, SearchBar } from "#/components/common";
+import {
+  CustomDate,
+  SearchBar,
+  withPermissions,
+  Permissions,
+} from "#/components/common";
 import type { ColumnDef } from "@tanstack/react-table";
 import { useGetRoles } from "./queries/roles.query";
 import type { Role } from "./queries/roles.query";
 import { CreateRoleDialog } from "./components/CreateRoleDialog";
+import { PERMISSIONS } from "#/lib/permissions";
 
-export function RolesPage() {
+export const RolesPage = withPermissions(() => {
   const { page, search } = useSearch({ strict: false });
   const { t } = useTranslation();
   const {
@@ -37,7 +43,11 @@ export function RolesPage() {
   return (
     <AppPage
       title={t("roles.page.title")}
-      headerRightComponent={<CreateRoleDialog />}
+      headerRightComponent={
+        <Permissions required={[PERMISSIONS.ROLES.WRITE]}>
+          <CreateRoleDialog />
+        </Permissions>
+      }
     >
       <DataTable
         header={<SearchBar />}
@@ -49,4 +59,4 @@ export function RolesPage() {
       />
     </AppPage>
   );
-}
+}, [PERMISSIONS.ROLES.READ]);

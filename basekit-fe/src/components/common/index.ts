@@ -5,3 +5,4 @@ export { default as SearchBar } from "./SearchBar";
 export type { IPagination } from "./DataTable";
 export { AppDialog } from "./AppDialog";
 export { Image } from "./Image";
+export { Permissions, withPermissions } from "./Permissions";

@@ -2,14 +2,20 @@ import { Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { AppPage } from "#/lib/universal-layout/";
 import DataTable, { type IPagination } from "#/components/common/DataTable";
-import { CustomDate, SearchBar } from "#/components/common";
+import {
+  CustomDate,
+  SearchBar,
+  withPermissions,
+  Permissions,
+} from "#/components/common";
 import type { ColumnDef } from "@tanstack/react-table";
 import { useGetUsers } from "./queries/users.query";
 import type { User } from "./queries/users.query";
 import { Badge } from "#/components/ui/badge";
 import { Button } from "#/components/ui/button";
+import { PERMISSIONS } from "#/lib/permissions";
 
-export function UsersPage() {
+export const UsersPage = withPermissions(() => {
   const { page, search } = useSearch({ strict: false });
   const { t } = useTranslation();
   const {
@@ -41,9 +47,11 @@ export function UsersPage() {
     <AppPage
       title={t("users.page.title")}
       headerRightComponent={
-        <Link to="/admin/users/new">
-          <Button>{t("users.page.new")}</Button>
-        </Link>
+        <Permissions required={[PERMISSIONS.USERS.WRITE]}>
+          <Link to="/admin/users/new">
+            <Button>{t("users.page.new")}</Button>
+          </Link>
+        </Permissions>
       }
     >
       <DataTable
@@ -58,4 +66,4 @@ export function UsersPage() {
       />
     </AppPage>
   );
-}
+}, [PERMISSIONS.USERS.READ]);

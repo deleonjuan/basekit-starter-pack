@@ -8,7 +8,8 @@ import { PencilIcon } from "lucide-react";
 import { useGetRole } from "./queries/getRole.query";
 import { useUpdateRole } from "./queries/updateRole.mutation";
 import { PermissionsTable } from "./components/PermissionsTable";
-import { CustomDate } from "#/components/common";
+import { CustomDate, withPermissions, Permissions } from "#/components/common";
+import { PERMISSIONS } from "#/lib/permissions";
 
 interface RoleDetailFormProps {
   roleId: string;
@@ -91,10 +92,12 @@ function RoleDetailForm({
             {t("roles.detail.sectionTitle")}
           </h2>
           {!isEditing ? (
-            <Button variant="outline" onClick={() => setIsEditing(true)}>
-              <PencilIcon size={16} />
-              {t("common.edit")}
-            </Button>
+            <Permissions required={[PERMISSIONS.ROLES.WRITE]}>
+              <Button variant="outline" onClick={() => setIsEditing(true)}>
+                <PencilIcon size={16} />
+                {t("common.edit")}
+              </Button>
+            </Permissions>
           ) : (
             <div className="flex justify-end gap-2">
               <Button
@@ -171,44 +174,55 @@ interface RoleDetailPageProps {
   page: number;
 }
 
-export function RoleDetailPage({ roleId, page }: RoleDetailPageProps) {
-  const { t } = useTranslation();
-  const { role, loading, refetch } = useGetRole(roleId);
+export const RoleDetailPage = withPermissions(
+  function RoleDetailPage({ roleId, page }: RoleDetailPageProps) {
+    const { t } = useTranslation();
+    const { role, loading, refetch } = useGetRole(roleId);
 
-  if (loading) {
+    if (loading) {
+      return (
+        <AppPage
+          title={t("roles.detail.title")}
+          goBackLink={{
+            to: "/admin/roles",
+            label: t("roles.detail.backLabel"),
+          }}
+        >
+          <div className="mt-8">
+            <p className="text-sm text-muted-foreground">
+              {t("common.loading")}
+            </p>
+          </div>
+        </AppPage>
+      );
+    }
+
+    if (!role) {
+      return (
+        <AppPage
+          title={t("roles.detail.title")}
+          goBackLink={{
+            to: "/admin/roles",
+            label: t("roles.detail.backLabel"),
+          }}
+        >
+          <div className="mt-8">
+            <p className="text-sm text-muted-foreground">
+              {t("roles.detail.notFound")}
+            </p>
+          </div>
+        </AppPage>
+      );
+    }
+
     return (
-      <AppPage
-        title={t("roles.detail.title")}
-        goBackLink={{ to: "/admin/roles", label: t("roles.detail.backLabel") }}
-      >
-        <div className="mt-8">
-          <p className="text-sm text-muted-foreground">{t("common.loading")}</p>
-        </div>
-      </AppPage>
+      <RoleDetailContainer
+        roleId={roleId}
+        role={role}
+        refetch={refetch}
+        page={page}
+      />
     );
-  }
-
-  if (!role) {
-    return (
-      <AppPage
-        title={t("roles.detail.title")}
-        goBackLink={{ to: "/admin/roles", label: t("roles.detail.backLabel") }}
-      >
-        <div className="mt-8">
-          <p className="text-sm text-muted-foreground">
-            {t("roles.detail.notFound")}
-          </p>
-        </div>
-      </AppPage>
-    );
-  }
-
-  return (
-    <RoleDetailContainer
-      roleId={roleId}
-      role={role}
-      refetch={refetch}
-      page={page}
-    />
-  );
-}
+  },
+  [PERMISSIONS.ROLES.READ],
+);

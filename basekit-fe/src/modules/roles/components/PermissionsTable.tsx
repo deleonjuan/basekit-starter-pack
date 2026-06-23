@@ -4,11 +4,14 @@ import { Checkbox } from "radix-ui";
 import { Check } from "lucide-react";
 import type { ColumnDef } from "@tanstack/react-table";
 import DataTable from "#/components/common/DataTable";
+import { Permissions } from "#/components/common";
 import { Button } from "#/components/ui/button";
 import { useGetPermissions } from "../queries/getPermissions.query";
 import type { Permission } from "../queries/getPermissions.query";
 import type { RolePermission } from "../queries/getRole.query";
 import { useSyncPermissions } from "../queries/syncPermissions.mutation";
+import { PERMISSIONS } from "#/lib/permissions";
+import { Badge } from "#/components/ui/badge";
 
 interface PermissionsTableProps {
   roleId: string;
@@ -102,19 +105,28 @@ export function PermissionsTable({
           {t("roles.permissions.title")}
         </h2>
         {isDirty && (
-          <div className="flex gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleCancel}
-              disabled={saving}
-            >
-              {t("common.cancel")}
-            </Button>
-            <Button type="button" onClick={handleSave} disabled={saving}>
-              {saving ? t("common.saving") : t("common.save")}
-            </Button>
-          </div>
+          <Permissions
+            required={[PERMISSIONS.ROLES.PERMISSIONS_WRITE]}
+            fallback={
+              <Badge variant={"destructive"}>
+                {t("roles.detail.noPermissionToWritePermissions")}
+              </Badge>
+            }
+          >
+            <div className="flex gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleCancel}
+                disabled={saving}
+              >
+                {t("common.cancel")}
+              </Button>
+              <Button type="button" onClick={handleSave} disabled={saving}>
+                {saving ? t("common.saving") : t("common.save")}
+              </Button>
+            </div>
+          </Permissions>
         )}
       </div>
       <DataTable

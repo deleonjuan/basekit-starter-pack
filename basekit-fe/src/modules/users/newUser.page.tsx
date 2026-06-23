@@ -5,8 +5,10 @@ import { FormGenerator, useAppForm, field } from "#/lib/form-generator";
 import type { FormSchemaField } from "#/lib/form-generator";
 import { Button } from "#/components/ui/button";
 import { useCreateUser } from "./queries/createUser.mutation";
+import { withPermissions } from "#/components/common";
+import { PERMISSIONS } from "#/lib/permissions";
 
-export function NewUserPage() {
+export const NewUserPage = withPermissions(() => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [createUser, { loading, error }] = useCreateUser();
@@ -74,4 +76,4 @@ export function NewUserPage() {
       </div>
     </AppPage>
   );
-}
+}, [PERMISSIONS.USERS.WRITE]);

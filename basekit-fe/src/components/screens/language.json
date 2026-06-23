@@ -11,6 +11,11 @@
         "fallbackMessage": "Ocurrió un error inesperado.",
         "retry": "Reintentar",
         "backToHome": "Volver al inicio"
+      },
+      "forbidden": {
+        "heading": "Acceso denegado",
+        "description": "No tienes permisos para acceder a esta página. Contacta a un administrador si crees que esto es un error.",
+        "backButton": "Volver al inicio"
       }
     }
   },
@@ -26,6 +31,11 @@
         "fallbackMessage": "An unexpected error occurred.",
         "retry": "Retry",
         "backToHome": "Back to home"
+      },
+      "forbidden": {
+        "heading": "Access denied",
+        "description": "You don't have permission to view this page. Contact an administrator if you think this is a mistake.",
+        "backButton": "Back to home"
       }
     }
   }

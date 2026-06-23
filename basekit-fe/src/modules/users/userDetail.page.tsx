@@ -4,13 +4,14 @@ import { AppPage } from "#/lib/universal-layout/";
 import { FormGenerator, useAppForm, field } from "#/lib/form-generator";
 import type { FormSchemaField } from "#/lib/form-generator";
 import { Button } from "#/components/ui/button";
-import { AppDialog } from "#/components/common";
+import { AppDialog, withPermissions, Permissions } from "#/components/common";
 import { useGetUser } from "./queries/getUser.query";
 import type { GetUserData } from "./queries/getUser.query";
 import { useUpdateUser } from "./queries/updateUser.mutation";
 import { PencilIcon } from "lucide-react";
 import type { User } from "./queries/users.query";
 import RolesTable from "./components/RolesTable";
+import { PERMISSIONS } from "#/lib/permissions";
 
 function UserDetailForm({
   userId,
@@ -66,10 +67,12 @@ function UserDetailForm({
             {t("users.detail.sectionTitle")}
           </h2>
           {!isEditing ? (
-            <Button variant="outline" onClick={() => setIsEditing(true)}>
-              <PencilIcon size={16} />
-              {t("common.edit")}
-            </Button>
+            <Permissions required={[PERMISSIONS.USERS.WRITE]}>
+              <Button variant="outline" onClick={() => setIsEditing(true)}>
+                <PencilIcon size={16} />
+                {t("common.edit")}
+              </Button>
+            </Permissions>
           ) : (
             <div className="flex justify-end gap-2">
               <Button
@@ -188,28 +191,38 @@ function UserDetailContainer({
       <div className="mt-8 flex flex-col gap-10">
         <UserDetailForm userId={userId} username={user?.username ?? ""} />
         <RolesTable userId={userId} roles={user?.roles ?? []} />
-        <DangerZone userId={userId} user={user} />
+        <Permissions required={[PERMISSIONS.USERS.WRITE]}>
+          <DangerZone userId={userId} user={user} />
+        </Permissions>
       </div>
     </AppPage>
   );
 }
 
-export function UserDetailPage({ userId }: { userId: string }) {
-  const { t } = useTranslation();
-  const { user, loading } = useGetUser(userId);
+export const UserDetailPage = withPermissions(
+  function UserDetailPage({ userId }: { userId: string }) {
+    const { t } = useTranslation();
+    const { user, loading } = useGetUser(userId);
 
-  if (loading) {
-    return (
-      <AppPage
-        title={t("users.detail.title")}
-        goBackLink={{ to: "/admin/users", label: t("users.detail.backLabel") }}
-      >
-        <div className="mt-8">
-          <p className="text-sm text-muted-foreground">{t("common.loading")}</p>
-        </div>
-      </AppPage>
-    );
-  }
+    if (loading) {
+      return (
+        <AppPage
+          title={t("users.detail.title")}
+          goBackLink={{
+            to: "/admin/users",
+            label: t("users.detail.backLabel"),
+          }}
+        >
+          <div className="mt-8">
+            <p className="text-sm text-muted-foreground">
+              {t("common.loading")}
+            </p>
+          </div>
+        </AppPage>
+      );
+    }
 
-  return <UserDetailContainer userId={userId} user={user} />;
-}
+    return <UserDetailContainer userId={userId} user={user} />;
+  },
+  [PERMISSIONS.USERS.READ],
+);

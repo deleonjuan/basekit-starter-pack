@@ -17,7 +17,8 @@
         "namePlaceholder": "nombre-del-rol",
         "descriptionTitle": "Descripción",
         "descriptionPlaceholder": "Descripción del rol",
-        "updateError": "Error al actualizar el rol."
+        "updateError": "Error al actualizar el rol.",
+        "noPermissionToWritePermissions": "Los cambios no se guardaran"
       },
       "createDialog": {
         "title": "Nuevo rol",
@@ -55,7 +56,8 @@
         "namePlaceholder": "role-name",
         "descriptionTitle": "Description",
         "descriptionPlaceholder": "Role description",
-        "updateError": "Error updating role."
+        "updateError": "Error updating role.",
+        "noPermissionToWritePermissions": "Changes won't be saved"
       },
       "createDialog": {
         "title": "New role",

@@ -6,6 +6,12 @@ export interface GetCurrentUserData {
   me: {
     id: string;
     username: string;
+    isSuperAdmin: boolean;
+    roles: {
+      permissions: {
+        value: string;
+      }[];
+    }[];
   } | null;
 }
 
@@ -18,6 +24,11 @@ export const GET_CURRENT_USER_QUERY: TypedDocumentNode<
       id
       username
       isSuperAdmin
+      roles {
+        permissions {
+          value
+        }
+      }
     }
   }
 `;
