@@ -11,6 +11,10 @@ FROM base AS build
 WORKDIR /app
 COPY . .
 COPY --from=dependencies /app/node_modules ./node_modules
+ARG VITE_API_BASE_URL
+ARG VITE_TENANT_SLUG
+ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
+ENV VITE_TENANT_SLUG=$VITE_TENANT_SLUG
 RUN pnpm build
 
 FROM nginx:alpine AS deploy
