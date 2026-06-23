@@ -12,6 +12,7 @@ import { PencilIcon } from "lucide-react";
 import type { User } from "./queries/users.query";
 import RolesTable from "./components/RolesTable";
 import { PERMISSIONS } from "#/lib/permissions";
+import { useParams } from "@tanstack/react-router";
 
 function UserDetailForm({
   userId,
@@ -182,47 +183,37 @@ function UserDetailContainer({
   userId: string;
   user: GetUserData["user"] | null;
 }) {
-  const { t } = useTranslation();
   return (
-    <AppPage
-      title={t("users.detail.title")}
-      goBackLink={{ to: "/admin/users", label: t("users.detail.backLabel") }}
-    >
-      <div className="mt-8 flex flex-col gap-10">
-        <UserDetailForm userId={userId} username={user?.username ?? ""} />
-        <RolesTable userId={userId} roles={user?.roles ?? []} />
-        <Permissions required={[PERMISSIONS.USERS.WRITE]}>
-          <DangerZone userId={userId} user={user} />
-        </Permissions>
-      </div>
-    </AppPage>
+    <div className="mt-8 flex flex-col gap-10">
+      <UserDetailForm userId={userId} username={user?.username ?? ""} />
+      <RolesTable userId={userId} roles={user?.roles ?? []} />
+      <Permissions required={[PERMISSIONS.USERS.WRITE]}>
+        <DangerZone userId={userId} user={user} />
+      </Permissions>
+    </div>
   );
 }
 
-export const UserDetailPage = withPermissions(
-  function UserDetailPage({ userId }: { userId: string }) {
-    const { t } = useTranslation();
-    const { user, loading } = useGetUser(userId);
+export const UserDetailPage = withPermissions(() => {
+  const { userId } = useParams({ from: "/_admin/admin/users/$userId" });
+  const { t } = useTranslation();
+  const { user, loading } = useGetUser(userId);
 
-    if (loading) {
-      return (
-        <AppPage
-          title={t("users.detail.title")}
-          goBackLink={{
-            to: "/admin/users",
-            label: t("users.detail.backLabel"),
-          }}
-        >
-          <div className="mt-8">
-            <p className="text-sm text-muted-foreground">
-              {t("common.loading")}
-            </p>
-          </div>
-        </AppPage>
-      );
-    }
-
-    return <UserDetailContainer userId={userId} user={user} />;
-  },
-  [PERMISSIONS.USERS.READ],
-);
+  return (
+    <AppPage
+      title={t("users.detail.title")}
+      goBackLink={{
+        to: "/admin/users",
+        label: t("users.detail.backLabel"),
+      }}
+    >
+      {loading ? (
+        <div className="mt-8">
+          <p className="text-sm text-muted-foreground">{t("common.loading")}</p>
+        </div>
+      ) : (
+        <UserDetailContainer userId={userId} user={user} />
+      )}
+    </AppPage>
+  );
+}, [PERMISSIONS.USERS.READ]);

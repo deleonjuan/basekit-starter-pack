@@ -41,7 +41,8 @@ export const NewUserPage = withPermissions(() => {
     onSubmit: async ({ value }) => {
       await createUser({
         variables: { input: value },
-        onCompleted: () => navigate({ to: "/admin/users" }),
+        onCompleted: () =>
+          navigate({ to: "/admin/users", search: { page: 1, search: "" } }),
       });
     },
   });

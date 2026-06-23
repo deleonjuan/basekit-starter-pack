@@ -8,7 +8,9 @@ export interface GetCurrentUserData {
     username: string;
     isSuperAdmin: boolean;
     roles: {
+      id: string;
       permissions: {
+        id: string;
         value: string;
       }[];
     }[];
@@ -25,7 +27,9 @@ export const GET_CURRENT_USER_QUERY: TypedDocumentNode<
       username
       isSuperAdmin
       roles {
+        id
         permissions {
+          id
           value
         }
       }
