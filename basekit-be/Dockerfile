@@ -19,5 +19,8 @@ FROM base AS deploy
 WORKDIR /app
 COPY --from=build /app/dist/ ./dist/
 COPY --from=build /app/node_modules ./node_modules
+COPY docker-entrypoint.sh ./
+RUN chmod +x docker-entrypoint.sh
 
+ENTRYPOINT ["./docker-entrypoint.sh"]
 CMD [ "node", "dist/src/main.js" ]
