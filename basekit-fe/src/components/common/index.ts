@@ -6,3 +6,4 @@ export type { IPagination } from "./DataTable";
 export { AppDialog } from "./AppDialog";
 export { Image } from "./Image";
 export { Permissions, withPermissions } from "./Permissions";
+export { ItemFinder } from "./ItemFinder";

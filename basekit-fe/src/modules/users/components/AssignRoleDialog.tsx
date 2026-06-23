@@ -1,16 +1,9 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button } from "#/components/ui/button";
-import {
-  Combobox,
-  ComboboxInput,
-  ComboboxPopup,
-  ComboboxList,
-  ComboboxItem,
-  ComboboxEmpty,
-} from "#/components/ui/combobox";
-import { AppDialog } from "#/components/common";
+import { AppDialog, ItemFinder } from "#/components/common";
 import { useGetRoles } from "#/modules/roles/queries/roles.query";
+import type { Role } from "#/modules/roles/queries/roles.query";
 import { useAssignRole } from "../queries/assignRole.mutation";
 import type { UserRole } from "../queries/getUser.query";
 
@@ -25,38 +18,25 @@ export function AssignRoleDialog({
 }: AssignRoleDialogProps) {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
-  const [selectedRoleId, setSelectedRoleId] = useState<string | null>(null);
-  const [inputValue, setInputValue] = useState("");
-
-  const { data } = useGetRoles();
+  const [selectedRole, setSelectedRole] = useState<Role | null>(null);
   const [assignRole, { loading, error }] = useAssignRole();
 
   const assignedIds = new Set(assignedRoles.map((r) => r.id));
-  const filteredRoles = (data.roles ?? [])
-    .filter((r) => !assignedIds.has(r.id))
-    .filter(
-      (r) =>
-        !inputValue || r.name.toLowerCase().includes(inputValue.toLowerCase()),
-    );
 
   const handleAccept = async () => {
-    if (!selectedRoleId) return;
+    if (!selectedRole) return;
     await assignRole({
-      variables: { userId, roleId: selectedRoleId },
+      variables: { userId, roleId: selectedRole.id },
       onCompleted: () => {
         setOpen(false);
-        setSelectedRoleId(null);
-        setInputValue("");
+        setSelectedRole(null);
       },
     });
   };
 
   const handleOpenChange = (newOpen: boolean) => {
     setOpen(newOpen);
-    if (!newOpen) {
-      setSelectedRoleId(null);
-      setInputValue("");
-    }
+    if (!newOpen) setSelectedRole(null);
   };
 
   return (
@@ -72,29 +52,16 @@ export function AssignRoleDialog({
           ? t("users.assignRoleDialog.submitting")
           : t("users.assignRoleDialog.submit")
       }
-      disable={!selectedRoleId || loading}
+      disable={!selectedRole || loading}
     >
-      <Combobox
-        items={filteredRoles.map((role) => ({
-          value: role.id,
-          label: role.name,
-        }))}
-        onValueChange={({ value }: any) => setSelectedRoleId(value)}
-      >
-        <ComboboxInput
-          placeholder={t("users.assignRoleDialog.searchPlaceholder")}
-        />
-        <ComboboxPopup>
-          <ComboboxList>
-            {(item) => (
-              <ComboboxItem key={item.value} value={item}>
-                {item.label}
-              </ComboboxItem>
-            )}
-          </ComboboxList>
-          <ComboboxEmpty>{t("users.assignRoleDialog.noResults")}</ComboboxEmpty>
-        </ComboboxPopup>
-      </Combobox>
+      <ItemFinder<Role>
+        useHook={useGetRoles}
+        dataKey="roles"
+        onChange={setSelectedRole}
+        filter={(role) => !assignedIds.has(role.id)}
+        placeholder={t("users.assignRoleDialog.searchPlaceholder")}
+        noResultLabel={t("users.assignRoleDialog.noResults")}
+      />
       {error && (
         <p className="mt-2 text-sm text-destructive">
           {error.message ?? t("users.assignRoleDialog.error")}
