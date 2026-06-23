@@ -20,7 +20,13 @@ export default defineConfig(({ mode }) => {
         },
       },
     },
-    
-    plugins: [devtools(), tailwindcss(), tanstackStart(), viteReact()],
+    plugins: [devtools(), tailwindcss(), tanstackStart({
+      spa: {
+        enabled: true,
+      },
+      prerender: {
+        enabled: false,
+      },
+    }), viteReact()],
   }
 })
