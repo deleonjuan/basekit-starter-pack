@@ -4,7 +4,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { SimpleDataTable } from "#/components/common/DataTable";
 import { CustomDate, AppDialog, Permissions } from "#/components/common";
 import { Button } from "#/components/ui/button";
-import { Trash2Icon } from "lucide-react";
+import { Trash2Icon, UnlinkIcon } from "lucide-react";
 import type { UserRole } from "../queries/getUser.query";
 import { AssignRoleDialog } from "./AssignRoleDialog";
 import { useRevokeRole } from "../queries/revokeRole.mutation";
@@ -23,8 +23,10 @@ function RevokeRoleButton({
 
   return (
     <AppDialog
+      isAlert
       open={open}
       onOpenChange={setOpen}
+      icon={<UnlinkIcon />}
       trigger={
         <Button
           variant="ghost"

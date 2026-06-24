@@ -1,4 +1,4 @@
-import type React from "react";
+import React from "react";
 import { Button } from "#/components/ui/button";
 import {
   Dialog,
@@ -22,6 +22,7 @@ interface AppDialogProps {
   onOpenChange: (open: boolean) => void;
   trigger: React.ReactElement;
   triggerLabel?: React.ReactNode;
+  icon?: React.ReactNode;
   title: string;
   children: React.ReactNode;
   formId?: string;
@@ -32,6 +33,7 @@ interface AppDialogProps {
   disable?: boolean;
   properties?: AppDialogProperties;
   showCloseButton?: boolean;
+  isAlert?: boolean;
 }
 
 export function AppDialog({
@@ -39,6 +41,7 @@ export function AppDialog({
   onOpenChange,
   trigger,
   triggerLabel,
+  icon,
   title,
   children,
   formId,
@@ -49,23 +52,42 @@ export function AppDialog({
   disable,
   properties,
   showCloseButton = true,
+  isAlert = false,
 }: AppDialogProps) {
   const submitVariant = properties?.submitButton?.variant ?? "default";
   const submitClassName = properties?.submitButton?.className;
+
   const handleCancel = () => {
     onCancel?.();
     onOpenChange(false);
   };
 
+  const alertFooterClass = isAlert ? "flex-col-reverse! gap-3!" : undefined;
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger render={trigger}>{triggerLabel}</DialogTrigger>
-      <DialogPopup showCloseButton={showCloseButton}>
+      <DialogPopup
+        showCloseButton={showCloseButton}
+        className={isAlert ? "w-80" : undefined}
+      >
         <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
+          {React.isValidElement(icon) &&
+            React.cloneElement(
+              icon as React.ReactElement<{ size?: number; className: string }>,
+              {
+                size:
+                  (icon as React.ReactElement<{ size?: number }>).props.size ??
+                  50,
+                className: "mb-4",
+              },
+            )}
+          <DialogTitle className={isAlert ? "text-base" : undefined}>
+            {title}
+          </DialogTitle>
         </DialogHeader>
         <DialogPanel>{children}</DialogPanel>
-        <DialogFooter variant="bare">
+        <DialogFooter variant="bare" className={alertFooterClass}>
           <Button variant="outline" type="button" onClick={handleCancel}>
             {onCancelLabel}
           </Button>

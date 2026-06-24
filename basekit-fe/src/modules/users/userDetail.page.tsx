@@ -8,7 +8,7 @@ import { AppDialog, withPermissions, Permissions } from "#/components/common";
 import { useGetUser } from "./queries/getUser.query";
 import type { GetUserData } from "./queries/getUser.query";
 import { useUpdateUser } from "./queries/updateUser.mutation";
-import { PencilIcon } from "lucide-react";
+import { PencilIcon, UserRoundXIcon } from "lucide-react";
 import type { User } from "./queries/users.query";
 import RolesTable from "./components/RolesTable";
 import { PERMISSIONS } from "#/lib/permissions";
@@ -146,6 +146,7 @@ function DangerZone({ userId, user }: { userId: string; user: User | null }) {
         <p className="text-sm text-muted-foreground">{labels.description}</p>
         <div className="mt-3">
           <AppDialog
+            isAlert
             open={open}
             onOpenChange={setOpen}
             trigger={
@@ -154,6 +155,7 @@ function DangerZone({ userId, user }: { userId: string; user: User | null }) {
                 disabled={loading}
               />
             }
+            icon={<UserRoundXIcon />}
             triggerLabel={labels.triggerLabel}
             title={labels.dialogTitle}
             onSubmit={handleConfirm}
