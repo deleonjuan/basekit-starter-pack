@@ -11,12 +11,11 @@ import { useTranslation } from "react-i18next";
 import { AuthGuard } from "#/modules/auth/components";
 import { LayoutWrapper, type SidebarItem } from "#/lib/universal-layout";
 import { SidebarMenuButton } from "#/components/ui/sidebar";
-import { useGetCurrentUser } from "#/modules/auth/queries/getCurrentUser.query";
+import { useUserStore } from "#/store/user.store";
 import { version } from "../../package.json";
 
 function SidebarUserItem() {
-  const { data } = useGetCurrentUser();
-  const username = data?.me?.username ?? "...";
+  const username = useUserStore((s) => s.user?.username ?? "...");
   return (
     <SidebarMenuButton
       tooltip={username}

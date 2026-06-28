@@ -1,10 +1,9 @@
 import type React from "react";
-import { useGetCurrentUser } from "#/modules/auth/queries/getCurrentUser.query";
+import { useUserStore } from "#/store/user.store";
 import { ForbiddenScreen } from "#/components/screens/ForbiddenScreen";
 
 function useHasPermissions(required: string[]): boolean {
-  const { data } = useGetCurrentUser();
-  const user = data?.me;
+  const user = useUserStore((s) => s.user);
   if (!user) return false;
   if (user.isSuperAdmin) return true;
   const granted = new Set(

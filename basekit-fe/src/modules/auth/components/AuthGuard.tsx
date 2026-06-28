@@ -4,6 +4,7 @@ import { useGetCurrentUser } from "../queries/getCurrentUser.query";
 import { useAuthRefresh } from "../hooks/useAuthRefresh";
 import { useGetPersonalSettings } from "#/modules/settings/queries/getPersonalSettings.query";
 import { useSettingsStore } from "#/store/settings.store";
+import { useUserStore } from "#/store/user.store";
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -16,8 +17,13 @@ export function AuthGuard({ children }: AuthGuardProps) {
   const navigate = useNavigate();
 
   const user = data?.me;
+  const setUser = useUserStore((s) => s.setUser);
   const applySettings = useSettingsStore((s) => s.applySettings);
   const settingsApplied = useRef(false);
+
+  useEffect(() => {
+    setUser(user ?? null);
+  }, [user, setUser]);
 
   const { data: settingsData } = useGetPersonalSettings({ skip: !user });
 

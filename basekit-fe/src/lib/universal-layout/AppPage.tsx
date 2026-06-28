@@ -100,7 +100,7 @@ function AppPage({
   classNames,
 }: AppPageProps) {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col mb-32">
       {title && (
         <AppPageHeader
           title={title}

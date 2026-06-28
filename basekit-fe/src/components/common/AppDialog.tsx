@@ -34,6 +34,7 @@ interface AppDialogProps {
   properties?: AppDialogProperties;
   showCloseButton?: boolean;
   isAlert?: boolean;
+  mandatory?: boolean;
 }
 
 export function AppDialog({
@@ -53,6 +54,7 @@ export function AppDialog({
   properties,
   showCloseButton = true,
   isAlert = false,
+  mandatory = false,
 }: AppDialogProps) {
   const submitVariant = properties?.submitButton?.variant ?? "default";
   const submitClassName = properties?.submitButton?.className;
@@ -62,13 +64,19 @@ export function AppDialog({
     onOpenChange(false);
   };
 
+  const handleOpenChange = mandatory
+    ? (next: boolean) => {
+        if (next) onOpenChange(next);
+      }
+    : onOpenChange;
+
   const alertFooterClass = isAlert ? "flex-col-reverse! gap-3!" : undefined;
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger render={trigger}>{triggerLabel}</DialogTrigger>
       <DialogPopup
-        showCloseButton={showCloseButton}
+        showCloseButton={mandatory ? false : showCloseButton}
         className={isAlert ? "w-80" : undefined}
       >
         <DialogHeader>
@@ -88,9 +96,11 @@ export function AppDialog({
         </DialogHeader>
         <DialogPanel>{children}</DialogPanel>
         <DialogFooter variant="bare" className={alertFooterClass}>
-          <Button variant="outline" type="button" onClick={handleCancel}>
-            {onCancelLabel}
-          </Button>
+          {!mandatory && (
+            <Button variant="outline" type="button" onClick={handleCancel}>
+              {onCancelLabel}
+            </Button>
+          )}
           {formId ? (
             <Button
               form={formId}
