@@ -10,10 +10,8 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarRail,
 } from "#/components/ui/sidebar.tsx";
-import { Image } from "#/components/common";
-import banner from "#/assets/banner.png";
+import { Image, Typography } from "#/components/common";
 
 type SidebarLinkItem = {
   label: string;
@@ -34,6 +32,8 @@ export type SidebarItem = SidebarLinkItem | SidebarRenderItem;
 interface SidebarProps {
   items: SidebarItem[];
   footerItems?: SidebarItem[];
+  headerLogo: string;
+  headerTitle?: string;
 }
 
 function SidebarItemRow({
@@ -53,7 +53,12 @@ function SidebarItemRow({
 
   return (
     <SidebarMenuItem>
-      <SidebarMenuButton asChild isActive={isActive} tooltip={item.label}>
+      <SidebarMenuButton
+        asChild
+        isActive={isActive}
+        tooltip={item.label}
+        className={`${isActive ? "text-primary!" : ""}`}
+      >
         <Link to={item.href}>
           {item.icon && <item.icon />}
           <span>{item.label}</span>
@@ -63,13 +68,27 @@ function SidebarItemRow({
   );
 }
 
-export function Sidebar({ items, footerItems = [] }: SidebarProps) {
+export function Sidebar({
+  items,
+  footerItems = [],
+  headerLogo,
+  headerTitle,
+}: SidebarProps) {
   const { location } = useRouterState();
 
   return (
     <ShadcnSidebar collapsible="icon">
-      <SidebarHeader className="bg-background p-3">
-        <Image src={banner} alt="BaseKit" />
+      <SidebarHeader className="bg-background mt-1 ps-2.5!">
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton className="p-0 h-auto">
+              <Image src={headerLogo} alt={headerTitle ?? "Logo"} size={38} />
+              {headerTitle && (
+                <Typography variant="title">{headerTitle}</Typography>
+              )}
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarHeader>
       <SidebarContent className="bg-background">
         <SidebarGroup>
@@ -95,7 +114,6 @@ export function Sidebar({ items, footerItems = [] }: SidebarProps) {
           </SidebarMenu>
         </SidebarFooter>
       )}
-      <SidebarRail />
     </ShadcnSidebar>
   );
 }

@@ -12,6 +12,8 @@ import { AuthGuard } from "#/modules/auth/components";
 import { LayoutWrapper, type SidebarItem } from "#/lib/universal-layout";
 import { SidebarMenuButton } from "#/components/ui/sidebar";
 import { useUserStore } from "#/store/user.store";
+import { useTenantStore } from "#/store/tenant.store";
+import logo from "#/assets/logo192.png";
 import { version } from "../../package.json";
 
 function SidebarUserItem() {
@@ -29,7 +31,7 @@ function SidebarUserItem() {
 
 function Version() {
   return (
-    <SidebarMenuButton className="hover:bg-background active:bg-background">
+    <SidebarMenuButton className="hover:bg-background active:bg-background flex justify-center">
       <span className="text-muted-foreground text-xs">{`v${version}`}</span>
     </SidebarMenuButton>
   );
@@ -41,6 +43,7 @@ export const Route = createFileRoute("/_admin")({
 
 function AdminLayout() {
   const { t } = useTranslation();
+  const tenantName = useTenantStore((s) => s.tenant?.name);
 
   const adminNav: SidebarItem[] = [
     { label: t("nav.dashboard"), href: "/admin", icon: LayoutDashboard },
@@ -57,7 +60,12 @@ function AdminLayout() {
 
   return (
     <AuthGuard>
-      <LayoutWrapper sidebarItems={adminNav} footerItems={adminFooter}>
+      <LayoutWrapper
+        sidebarItems={adminNav}
+        footerItems={adminFooter}
+        headerLogo={logo}
+        headerTitle={tenantName}
+      >
         <Outlet />
       </LayoutWrapper>
     </AuthGuard>

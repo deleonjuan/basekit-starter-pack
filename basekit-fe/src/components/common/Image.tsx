@@ -6,7 +6,7 @@ interface ImageProps {
   src: string;
   alt?: string;
   ratio?: Ratio;
-  size?: string;
+  size?: number;
   className?: string;
 }
 

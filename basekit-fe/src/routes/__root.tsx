@@ -5,8 +5,6 @@ import {
 } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { TanStackDevtools } from "@tanstack/react-devtools";
-import { useEffect } from "react";
-import { useNavigate, useRouterState } from "@tanstack/react-router";
 
 import appCss from "../styles.css?url";
 
@@ -16,8 +14,6 @@ import { ErrorScreen } from "#/components/screens/ErrorScreen";
 import { ThemeProvider, useTheme } from "#/lib/universal-layout";
 import { ApolloProvider } from "@apollo/client/react";
 import { AppDataLoader } from "#/modules/tenant/TenantInitializer";
-import { useSettingsStore } from "#/store/settings.store";
-import { useTenantStore } from "#/store/tenant.store";
 import "#/lib/i18n";
 import NavigationController from "#/modules/auth/components/NavigationController";
 
