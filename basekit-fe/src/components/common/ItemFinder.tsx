@@ -26,7 +26,10 @@ interface ItemFinderProps<T extends Record<string, unknown>> {
   keyValue?: string;
   labelValue?: string;
 }
-
+/**
+ * TODO: add readonly option to use as selector
+ * POC: create ItemSelector component similar to this one, pass extra list via props
+ */
 export function ItemFinder<T extends Record<string, unknown>>({
   useHook,
   dataKey,

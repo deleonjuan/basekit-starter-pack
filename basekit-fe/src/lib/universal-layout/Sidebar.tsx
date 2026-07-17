@@ -68,6 +68,24 @@ function SidebarItemRow({
   );
 }
 
+function getActiveHref(
+  pathname: string,
+  items: SidebarItem[],
+): string | undefined {
+  let activeHref: string | undefined;
+
+  for (const item of items) {
+    if (!item.href) continue;
+    const isMatch =
+      pathname === item.href || pathname.startsWith(`${item.href}/`);
+    if (isMatch && (!activeHref || item.href.length > activeHref.length)) {
+      activeHref = item.href;
+    }
+  }
+
+  return activeHref;
+}
+
 export function Sidebar({
   items,
   footerItems = [],
@@ -75,6 +93,7 @@ export function Sidebar({
   headerTitle,
 }: SidebarProps) {
   const { location } = useRouterState();
+  const activeHref = getActiveHref(location.pathname, items);
 
   return (
     <ShadcnSidebar collapsible="icon">
@@ -98,7 +117,7 @@ export function Sidebar({
                 <SidebarItemRow
                   key={item.href ?? item.label}
                   item={item}
-                  isActive={location.pathname === item.href}
+                  isActive={!!item.href && item.href === activeHref}
                 />
               ))}
             </SidebarMenu>

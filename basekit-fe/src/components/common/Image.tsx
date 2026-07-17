@@ -1,6 +1,6 @@
 import { cn } from "#/lib/utils";
 
-type Ratio = "original" | "1:1" | "1:2";
+export type Ratio = "original" | "1:1" | "1:2" | "3:2";
 
 interface ImageProps {
   src: string;
@@ -8,6 +8,7 @@ interface ImageProps {
   ratio?: Ratio;
   size?: number;
   className?: string;
+  fallback?: React.ReactNode;
 }
 
 export function Image({
@@ -16,6 +17,7 @@ export function Image({
   ratio = "original",
   size,
   className,
+  fallback,
 }: ImageProps) {
   const isOriginal = ratio === "original";
 
@@ -27,15 +29,23 @@ export function Image({
   return (
     <div
       style={containerStyle}
-      className={cn(!isOriginal && "overflow-hidden", className)}
+      className={cn(
+        !isOriginal && "overflow-hidden",
+        !src && fallback && "flex items-center justify-center",
+        className,
+      )}
     >
-      <img
-        src={src}
-        alt={alt}
-        className={
-          isOriginal ? "w-full object-contain" : "w-full h-full object-cover"
-        }
-      />
+      {!src && fallback ? (
+        fallback
+      ) : (
+        <img
+          src={src}
+          alt={alt}
+          className={
+            isOriginal ? "w-full object-contain" : "w-full h-full object-cover"
+          }
+        />
+      )}
     </div>
   );
 }

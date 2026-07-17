@@ -30,8 +30,13 @@ import { Tenant } from "../src/tenant/tenant.entity";
 import { User } from "../src/user/entities/user.entity";
 import config from "../config/config";
 
-// Load .env before config() is evaluated inside main() (Node 20.12+)
-(process as any).loadEnvFile?.();
+// Load .env before config() is evaluated inside main() (Node 20.12+).
+// In Docker, env vars are injected directly and there is no .env file on disk.
+try {
+  (process as any).loadEnvFile?.();
+} catch (err: any) {
+  if (err?.code !== "ENOENT") throw err;
+}
 
 function parseArgs(): Record<string, string | boolean> {
   const args = process.argv.slice(2);

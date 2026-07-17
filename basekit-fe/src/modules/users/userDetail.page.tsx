@@ -4,7 +4,12 @@ import { AppPage } from "#/lib/universal-layout/";
 import { FormGenerator, useAppForm, field } from "#/lib/form-generator";
 import type { FormSchemaField } from "#/lib/form-generator";
 import { Button } from "#/components/ui/button";
-import { AppDialog, withPermissions, Permissions } from "#/components/common";
+import {
+  AppDialog,
+  withPermissions,
+  Permissions,
+  DangerZoneTable,
+} from "#/components/common";
 import { useGetUser } from "./queries/getUser.query";
 import type { GetUserData } from "./queries/getUser.query";
 import { useUpdateUser } from "./queries/updateUser.mutation";
@@ -13,6 +18,7 @@ import type { User } from "./queries/users.query";
 import RolesTable from "./components/RolesTable";
 import { PERMISSIONS } from "#/lib/permissions";
 import { useParams } from "@tanstack/react-router";
+import type { DangerZoneAction } from "#/components/common/DangerZoneTable";
 
 function UserDetailForm({
   userId,
@@ -136,44 +142,44 @@ function DangerZone({ userId, user }: { userId: string; user: User | null }) {
     });
   };
 
+  const actions: DangerZoneAction[] = [
+    {
+      title: labels.sectionTitle,
+      description: labels.description,
+      action: (
+        <AppDialog
+          isAlert
+          open={open}
+          onOpenChange={setOpen}
+          trigger={
+            <Button
+              variant={isActive ? "destructive" : "default"}
+              disabled={loading}
+            />
+          }
+          icon={<UserRoundXIcon />}
+          triggerLabel={labels.triggerLabel}
+          title={labels.dialogTitle}
+          onSubmit={handleConfirm}
+          onSubmitLabel={labels.submitLabel}
+          disable={loading}
+          showCloseButton={false}
+          properties={
+            isActive ? { submitButton: { variant: "destructive" } } : undefined
+          }
+        >
+          <p className="text-sm text-muted-foreground">{labels.description}</p>
+        </AppDialog>
+      ),
+    },
+  ];
+
   return (
     <section className="flex flex-col gap-4">
       <h2 className="text-lg font-semibold">
         {t("users.detail.dangerZone.title")}
       </h2>
-      <div className="flex flex-col gap-1">
-        <p className="text-sm font-medium">{labels.sectionTitle}</p>
-        <p className="text-sm text-muted-foreground">{labels.description}</p>
-        <div className="mt-3">
-          <AppDialog
-            isAlert
-            open={open}
-            onOpenChange={setOpen}
-            trigger={
-              <Button
-                variant={isActive ? "destructive" : "default"}
-                disabled={loading}
-              />
-            }
-            icon={<UserRoundXIcon />}
-            triggerLabel={labels.triggerLabel}
-            title={labels.dialogTitle}
-            onSubmit={handleConfirm}
-            onSubmitLabel={labels.submitLabel}
-            disable={loading}
-            showCloseButton={false}
-            properties={
-              isActive
-                ? { submitButton: { variant: "destructive" } }
-                : undefined
-            }
-          >
-            <p className="text-sm text-muted-foreground">
-              {labels.description}
-            </p>
-          </AppDialog>
-        </div>
-      </div>
+      <DangerZoneTable actions={actions} />
     </section>
   );
 }
