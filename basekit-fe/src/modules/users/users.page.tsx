@@ -14,6 +14,7 @@ import type { User } from "./queries/users.query";
 import { Badge } from "#/components/ui/badge";
 import { Button } from "#/components/ui/button";
 import { PERMISSIONS } from "#/lib/permissions";
+import { CheckIcon, XIcon } from "lucide-react";
 
 export const UsersPage = withPermissions(() => {
   const { page, search } = useSearch({ strict: false });
@@ -29,12 +30,11 @@ export const UsersPage = withPermissions(() => {
     {
       accessorKey: "isActive",
       header: t("users.table.active"),
-      cell: ({ getValue }) =>
-        getValue<boolean>() ? (
-          <Badge variant="success">{t("users.table.activeStatus")}</Badge>
-        ) : (
-          <Badge variant="destructive">{t("users.table.inactiveStatus")}</Badge>
-        ),
+      cell: ({ getValue }) => {
+        const status = getValue<boolean>();
+        if (status) return <CheckIcon size={20} color="green" />;
+        return <XIcon size={20} color="red" />;
+      },
     },
     {
       accessorKey: "createdAt",

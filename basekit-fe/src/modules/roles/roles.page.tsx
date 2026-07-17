@@ -13,6 +13,7 @@ import { useGetRoles } from "./queries/roles.query";
 import type { Role } from "./queries/roles.query";
 import { CreateRoleDialog } from "./components/CreateRoleDialog";
 import { PERMISSIONS } from "#/lib/permissions";
+import { CheckIcon, XIcon } from "lucide-react";
 
 export const RolesPage = withPermissions(() => {
   const { page, search } = useSearch({ strict: false });
@@ -25,6 +26,15 @@ export const RolesPage = withPermissions(() => {
 
   const columns: ColumnDef<Role>[] = [
     { accessorKey: "name", header: t("roles.table.name") },
+    {
+      accessorKey: "isActive",
+      header: t("roles.table.status"),
+      cell: ({ getValue }) => {
+        const status = getValue<boolean>();
+        if (status) return <CheckIcon size={20} color="green" />;
+        return <XIcon size={20} color="red" />;
+      },
+    },
     {
       accessorKey: "createdAt",
       header: t("roles.table.createdAt"),

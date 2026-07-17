@@ -163,6 +163,7 @@ input CreateRoleInput {
 input UpdateRoleInput {
   name: String
   description: String
+  isActive: Boolean
 }
 
 input UpdateSettingInput {

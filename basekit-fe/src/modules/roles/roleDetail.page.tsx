@@ -4,11 +4,19 @@ import { AppPage } from "#/lib/universal-layout/";
 import { FormGenerator, useAppForm, field } from "#/lib/form-generator";
 import type { FormSchemaField } from "#/lib/form-generator";
 import { Button } from "#/components/ui/button";
-import { PencilIcon } from "lucide-react";
+import { PencilIcon, ShieldOffIcon } from "lucide-react";
 import { useGetRole } from "./queries/getRole.query";
+import type { RoleDetail } from "./queries/getRole.query";
 import { useUpdateRole } from "./queries/updateRole.mutation";
 import { PermissionsTable } from "./components/PermissionsTable";
-import { CustomDate, withPermissions, Permissions } from "#/components/common";
+import {
+  AppDialog,
+  CustomDate,
+  withPermissions,
+  Permissions,
+  DangerZoneTable,
+} from "#/components/common";
+import type { DangerZoneAction } from "#/components/common/DangerZoneTable";
 import { PERMISSIONS } from "#/lib/permissions";
 
 interface RoleDetailFormProps {
@@ -127,6 +135,81 @@ function RoleDetailForm({
   );
 }
 
+function DangerZone({ roleId, role }: { roleId: string; role: RoleDetail }) {
+  const { t } = useTranslation();
+  const [open, setOpen] = useState(false);
+  const [updateRole, { loading }] = useUpdateRole();
+  const isActive = role.isActive;
+
+  const labels = isActive
+    ? {
+        sectionTitle: t("roles.detail.dangerZone.deactivate.sectionTitle"),
+        description: t("roles.detail.dangerZone.deactivate.description"),
+        triggerLabel: t("roles.detail.dangerZone.deactivate.triggerLabel"),
+        dialogTitle: t("roles.detail.dangerZone.deactivate.dialogTitle"),
+        submitLabel: loading
+          ? t("roles.detail.dangerZone.deactivate.submitting")
+          : t("roles.detail.dangerZone.deactivate.submit"),
+      }
+    : {
+        sectionTitle: t("roles.detail.dangerZone.activate.sectionTitle"),
+        description: t("roles.detail.dangerZone.activate.description"),
+        triggerLabel: t("roles.detail.dangerZone.activate.triggerLabel"),
+        dialogTitle: t("roles.detail.dangerZone.activate.dialogTitle"),
+        submitLabel: loading
+          ? t("roles.detail.dangerZone.activate.submitting")
+          : t("roles.detail.dangerZone.activate.submit"),
+      };
+
+  const handleConfirm = () => {
+    updateRole({
+      variables: { id: roleId, input: { isActive: !isActive } },
+      onCompleted: () => setOpen(false),
+    });
+  };
+
+  const actions: DangerZoneAction[] = [
+    {
+      title: labels.sectionTitle,
+      description: labels.description,
+      action: (
+        <AppDialog
+          isAlert
+          open={open}
+          onOpenChange={setOpen}
+          trigger={
+            <Button
+              variant={isActive ? "destructive" : "default"}
+              disabled={loading}
+            />
+          }
+          icon={<ShieldOffIcon />}
+          triggerLabel={labels.triggerLabel}
+          title={labels.dialogTitle}
+          onSubmit={handleConfirm}
+          onSubmitLabel={labels.submitLabel}
+          disable={loading}
+          showCloseButton={false}
+          properties={
+            isActive ? { submitButton: { variant: "destructive" } } : undefined
+          }
+        >
+          <p className="text-sm text-muted-foreground">{labels.description}</p>
+        </AppDialog>
+      ),
+    },
+  ];
+
+  return (
+    <section className="flex flex-col gap-4">
+      <h2 className="text-lg font-semibold">
+        {t("roles.detail.dangerZone.title")}
+      </h2>
+      <DangerZoneTable actions={actions} />
+    </section>
+  );
+}
+
 interface RoleDetailContainerProps {
   roleId: string;
   role: NonNullable<ReturnType<typeof useGetRole>["role"]>;
@@ -151,7 +234,7 @@ function RoleDetailContainer({
       }
       goBackLink={{ to: "/admin/roles", label: t("roles.detail.backLabel") }}
     >
-      <div className="mt-8 flex flex-col gap-10">
+      <div className="mt-8 mb-32 flex flex-col gap-10">
         <RoleDetailForm
           roleId={roleId}
           name={role.name}
@@ -164,6 +247,9 @@ function RoleDetailContainer({
           refetch={refetch}
           page={page}
         />
+        <Permissions required={[PERMISSIONS.ROLES.WRITE]}>
+          <DangerZone roleId={roleId} role={role} />
+        </Permissions>
       </div>
     </AppPage>
   );

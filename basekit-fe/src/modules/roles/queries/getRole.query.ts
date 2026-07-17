@@ -13,6 +13,7 @@ export interface RoleDetail {
   id: string;
   name: string;
   description: string | null;
+  isActive: boolean;
   createdAt: string;
   permissions: RolePermission[];
 }
@@ -28,6 +29,7 @@ export const GET_ROLE_QUERY: TypedDocumentNode<GetRoleData, { id: string }> =
         id
         name
         description
+        isActive
         createdAt
         permissions {
           id

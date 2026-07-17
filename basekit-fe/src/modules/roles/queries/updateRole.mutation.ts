@@ -5,6 +5,7 @@ import { useMutation } from "@apollo/client/react";
 export interface UpdateRoleInput {
   name?: string;
   description?: string;
+  isActive?: boolean;
 }
 
 export interface UpdateRoleData {
@@ -12,6 +13,7 @@ export interface UpdateRoleData {
     id: string;
     name: string;
     description: string | null;
+    isActive: boolean;
     createdAt: string;
   };
 }
@@ -25,6 +27,7 @@ export const UPDATE_ROLE_MUTATION: TypedDocumentNode<
       id
       name
       description
+      isActive
       createdAt
     }
   }

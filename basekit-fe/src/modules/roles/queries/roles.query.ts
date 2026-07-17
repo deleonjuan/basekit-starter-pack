@@ -27,6 +27,7 @@ export const GET_ROLES_QUERY: TypedDocumentNode<
       data {
         id
         name
+        isActive
         createdAt
       }
       page

@@ -7,7 +7,7 @@
       },
       "table": {
         "username": "Usuario",
-        "active": "Estado",
+        "active": "Activo",
         "createdAt": "Creado",
         "activeStatus": "Activo",
         "inactiveStatus": "Inactivo"
@@ -83,7 +83,7 @@
       },
       "table": {
         "username": "Username",
-        "active": "Status",
+        "active": "Active",
         "createdAt": "Created",
         "activeStatus": "Active",
         "inactiveStatus": "Inactive"

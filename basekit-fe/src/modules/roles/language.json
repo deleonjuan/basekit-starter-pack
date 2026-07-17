@@ -4,6 +4,7 @@
       "page": { "title": "Roles" },
       "table": {
         "name": "Nombre",
+        "status": "Activo",
         "createdAt": "Creado"
       },
       "detail": {
@@ -18,7 +19,26 @@
         "descriptionTitle": "Descripción",
         "descriptionPlaceholder": "Descripción del rol",
         "updateError": "Error al actualizar el rol.",
-        "noPermissionToWritePermissions": "Los cambios no se guardaran"
+        "noPermissionToWritePermissions": "Los cambios no se guardaran",
+        "dangerZone": {
+          "title": "Zona de peligro",
+          "deactivate": {
+            "sectionTitle": "Desactivar rol",
+            "description": "Una vez desactivado, este rol no podrá ser asignado ni otorgará sus permisos.",
+            "triggerLabel": "Desactivar este rol",
+            "dialogTitle": "¿Desactivar rol?",
+            "submit": "Desactivar",
+            "submitting": "Desactivando..."
+          },
+          "activate": {
+            "sectionTitle": "Activar rol",
+            "description": "Una vez activado, este rol podrá ser asignado y otorgará sus permisos.",
+            "triggerLabel": "Activar este rol",
+            "dialogTitle": "¿Activar rol?",
+            "submit": "Activar",
+            "submitting": "Activando..."
+          }
+        }
       },
       "createDialog": {
         "title": "Nuevo rol",
@@ -43,6 +63,7 @@
       "page": { "title": "Roles" },
       "table": {
         "name": "Name",
+        "status": "Active",
         "createdAt": "Created"
       },
       "detail": {
@@ -57,7 +78,26 @@
         "descriptionTitle": "Description",
         "descriptionPlaceholder": "Role description",
         "updateError": "Error updating role.",
-        "noPermissionToWritePermissions": "Changes won't be saved"
+        "noPermissionToWritePermissions": "Changes won't be saved",
+        "dangerZone": {
+          "title": "Danger zone",
+          "deactivate": {
+            "sectionTitle": "Deactivate role",
+            "description": "Once deactivated, this role can't be assigned and will not grant its permissions.",
+            "triggerLabel": "Deactivate this role",
+            "dialogTitle": "Deactivate role?",
+            "submit": "Deactivate",
+            "submitting": "Deactivating..."
+          },
+          "activate": {
+            "sectionTitle": "Activate role",
+            "description": "Once activated, this role can be assigned and will grant its permissions.",
+            "triggerLabel": "Activate this role",
+            "dialogTitle": "Activate role?",
+            "submit": "Activate",
+            "submitting": "Activating..."
+          }
+        }
       },
       "createDialog": {
         "title": "New role",

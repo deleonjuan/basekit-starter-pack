@@ -7,4 +7,7 @@ export class UpdateRoleInput {
 
   @Field({ nullable: true })
   description?: string;
+
+  @Field({ nullable: true })
+  isActive?: boolean;
 }
