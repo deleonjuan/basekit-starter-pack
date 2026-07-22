@@ -8,3 +8,4 @@ export { AppDialog } from "./AppDialog";
 export { Image } from "./Image";
 export { Permissions, withPermissions } from "./Permissions";
 export { ItemFinder } from "./ItemFinder";
+export { CommandItemFinder } from "./CommandItemFinder";

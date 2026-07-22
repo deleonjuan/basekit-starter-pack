@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button } from "#/components/ui/button";
-import { AppDialog, ItemFinder } from "#/components/common";
+import { AppDialog, CommandItemFinder } from "#/components/common";
 import { useGetRoles } from "#/modules/roles/queries/roles.query";
 import type { Role } from "#/modules/roles/queries/roles.query";
 import { useAssignRole } from "../queries/assignRole.mutation";
@@ -54,12 +54,13 @@ export function AssignRoleDialog({
       }
       disable={!selectedRole || loading}
     >
-      <ItemFinder<Role>
+      <CommandItemFinder<Role>
         useHook={useGetRoles}
         dataKey="roles"
         onChange={setSelectedRole}
         filter={(role) => !assignedIds.has(role.id)}
         placeholder={t("users.assignRoleDialog.searchPlaceholder")}
+        searchPlaceholder={t("users.assignRoleDialog.searchPlaceholder")}
         noResultLabel={t("users.assignRoleDialog.noResults")}
       />
       {error && (
