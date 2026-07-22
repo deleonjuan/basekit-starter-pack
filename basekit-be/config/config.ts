@@ -12,6 +12,12 @@ export default () => ({
   multitenancy: {
     enabled: process.env.MULTITENANCY_ENABLED !== 'false',
   },
+  throttle: {
+    ttl: Number(process.env.THROTTLE_TTL ?? 60),
+    limit: Number(process.env.THROTTLE_LIMIT ?? 100),
+    loginTtl: Number(process.env.THROTTLE_LOGIN_TTL ?? 900),
+    loginLimit: Number(process.env.THROTTLE_LOGIN_LIMIT ?? 5),
+  },
   jwt: {
     secret: process.env.JWT_SECRET ?? 'changeme',
     expiresIn: process.env.JWT_EXPIRES_IN ?? '15m',

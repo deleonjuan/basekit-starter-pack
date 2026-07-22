@@ -4,6 +4,7 @@ import { AuthService } from "./auth.service";
 import { AuthPayload } from "./dto/auth-payload.type";
 import { LoginInput } from "./dto/login.input";
 import { Public } from "./decorators/public.decorator";
+import { Throttle } from "../common/decorators/throttle.decorator";
 import config from "../../config/config";
 
 @Resolver()
@@ -11,6 +12,7 @@ export class AuthResolver {
   constructor(private readonly authService: AuthService) {}
 
   @Public()
+  @Throttle(config().throttle.loginLimit, config().throttle.loginTtl)
   @Mutation(() => AuthPayload)
   async login(
     @Args("input") input: LoginInput,

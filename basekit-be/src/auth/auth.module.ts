@@ -9,6 +9,7 @@ import { JwtStrategy } from "./jwt.strategy";
 import { JwtAuthGuard } from "./guards/jwt-auth.guard";
 import { TenantGuard } from "../tenant/tenant.guard";
 import { PermissionsGuard } from "./guards/permissions.guard";
+import { GraphqlThrottlerGuard } from "../common/guards/graphql-throttler.guard";
 import { TenantModule } from "../tenant/tenant.module";
 import { UserModule } from "../user/user.module";
 import config from "../../config/config";
@@ -29,6 +30,7 @@ import config from "../../config/config";
     JwtStrategy,
     { provide: APP_GUARD, useClass: JwtAuthGuard },
     { provide: APP_GUARD, useClass: TenantGuard },
+    { provide: APP_GUARD, useClass: GraphqlThrottlerGuard },
     { provide: APP_GUARD, useClass: PermissionsGuard },
   ],
 })

@@ -7,6 +7,7 @@ import {
 import { GraphQLModule } from "@nestjs/graphql";
 import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
 import { TypeOrmModule } from "@nestjs/typeorm";
+import { ThrottlerModule, seconds } from "@nestjs/throttler";
 import { AppController } from "./app.controller";
 import { masterDataSourceOptions } from "../database/datasource";
 import { TenantMiddleware } from "./tenant/tenant.middleware";
@@ -18,10 +19,21 @@ import { AuthModule } from "./auth/auth.module";
 import { UserModule } from "./user/user.module";
 import { RoleModule } from "./role/role.module";
 import { SettingsModule } from "./settings/settings.module";
+import config from "../config/config";
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
+    ThrottlerModule.forRootAsync({
+      useFactory: () => ({
+        throttlers: [
+          {
+            ttl: seconds(config().throttle.ttl),
+            limit: config().throttle.limit,
+          },
+        ],
+      }),
+    }),
     TypeOrmModule.forRoot(masterDataSourceOptions),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
